@@ -1,0 +1,273 @@
+.jazzmin-login-page {
+  background: #F4F6F9 !important;
+}
+
+.jazzmin-login-page .login-box {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  height: 100vh;
+  display: flex;
+}
+
+.jazzmin-login-page .login-logo {
+  display: none !important;
+}
+
+.jazzmin-login-page .card {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+.jazzmin-login-page .card-body {
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+.jlmss-login {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  font-family: Inter, Poppins, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  color: #1F2937;
+}
+
+.jlmss-login__left {
+  background: radial-gradient(1200px 800px at 20% 20%, rgba(212, 175, 55, 0.18), transparent 55%),
+              linear-gradient(135deg, #0B1F3A 0%, #0A1A30 60%, #091628 100%);
+  padding: 56px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jlmss-login__brand {
+  text-align: center;
+  max-width: 520px;
+}
+
+.jlmss-login__badge {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 999px;
+  padding: 10px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
+  margin-bottom: 18px;
+}
+
+.jlmss-login__school {
+  color: #FFFFFF;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  font-size: 22px;
+  line-height: 1.25;
+}
+
+.jlmss-login__tag {
+  color: rgba(255, 255, 255, 0.82);
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+.jlmss-login__welcome {
+  margin-top: 18px;
+  color: rgba(255, 255, 255, 0.70);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.jlmss-login__right {
+  padding: 56px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jlmss-login__card {
+  width: 100%;
+  max-width: 460px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  backdrop-filter: blur(12px);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 35px;
+}
+
+.jlmss-login__cardhead {
+  margin-bottom: 18px;
+}
+
+.jlmss-login__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 22px;
+}
+
+.jlmss-login__lock {
+  color: #D4AF37;
+}
+
+.jlmss-login__note {
+  margin-top: 6px;
+  color: #6B7280;
+  font-size: 13px;
+}
+
+.jlmss-login__alert {
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.20);
+  color: #991B1B;
+  border-radius: 12px;
+  padding: 12px 12px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.jlmss-login__label {
+  display: block;
+  font-size: 13px;
+  color: #374151;
+  font-weight: 600;
+  margin: 12px 0 6px;
+}
+
+.jlmss-login__field {
+  position: relative;
+}
+
+.jlmss-login__input {
+  width: 100%;
+  height: 45px;
+  border-radius: 10px;
+  border: 1px solid #D1D5DB;
+  background: #FFFFFF;
+  padding: 0 44px 0 14px;
+  font-size: 14px;
+  outline: none;
+}
+
+.jlmss-login__input:focus {
+  border-color: rgba(212, 175, 55, 0.95);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.22);
+}
+
+.jlmss-login__icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6B7280;
+}
+
+.jlmss-login__toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: #6B7280;
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.jlmss-login__toggle:hover {
+  background: rgba(11, 31, 58, 0.06);
+  color: #0B1F3A;
+}
+
+.jlmss-login__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.jlmss-login__remember {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #374151;
+  font-weight: 600;
+  margin: 0;
+}
+
+.jlmss-login__remember input {
+  width: 16px;
+  height: 16px;
+}
+
+.jlmss-login__link {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0B1F3A;
+  text-decoration: none;
+}
+
+.jlmss-login__link:hover {
+  text-decoration: underline;
+}
+
+.jlmss-login__btn {
+  width: 100%;
+  height: 48px;
+  margin-top: 18px;
+  border: 0;
+  border-radius: 8px;
+  background: #0B1F3A;
+  color: #FFFFFF;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.jlmss-login__btn:hover {
+  filter: brightness(0.95);
+}
+
+.jlmss-login__secure {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #6B7280;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.jlmss-login__secureicon {
+  color: #D4AF37;
+}
+
+@media (max-width: 980px) {
+  .jlmss-login {
+    grid-template-columns: 1fr;
+  }
+
+  .jlmss-login__left {
+    padding: 36px 22px;
+  }
+
+  .jlmss-login__right {
+    padding: 24px 18px 40px;
+  }
+
+  .jlmss-login__badge {
+    width: 85px;
+    height: 85px;
+  }
+
+  .jlmss-login__card {
+    padding: 24px;
+  }
+}
