@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.Python
+pip-log.txt
+
+# Django
+*.sqlite3
+*.db
+db.sqlite3
+/media/
+/staticfiles/
+local_settings.py
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Migrations (optional — kept for reference)
+# */migrations/
+
+# Secrets (do NOT commit)
+*.env
+.env.local
