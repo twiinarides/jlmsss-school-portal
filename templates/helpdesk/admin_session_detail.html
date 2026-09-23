@@ -1,0 +1,86 @@
+{% extends 'school/base.html' %}
+{% load static %}
+
+{% block title %}Live Support Chat — {{ session.visitor_name }}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/helpdesk.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="hd-admin-layout">
+  
+  {# ── SIDEBAR: Session list ── #}
+  <div class="hd-admin-sidebar">
+    <div class="hd-admin-sidebar__header">
+      <span>Active Sessions</span>
+      {% if open_count %}<span class="badge bg-danger">{{ open_count }} open</span>{% endif %}
+    </div>
+    
+    <div class="list-group list-group-flush">
+      {% for s in sessions %}
+      <div class="hd-session-item list-group-item {% if s.id == session.id %}active{% endif %} {% if s.unread_by_admin %}unread{% endif %}"
+           data-session-url="{% url 'helpdesk:helpdesk_admin_detail' s.pk %}">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="hd-session-name">{{ s.visitor_name }}</span>
+          <span class="hd-session-time">{{ s.last_activity_at|date:"H:i" }}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="hd-session-preview text-muted">{{ s.subject|default:"No subject" }}</span>
+          {% if s.unread_by_admin %}
+          <span class="hd-session-badge">{{ s.unread_by_admin }}</span>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {# ── RIGHT: Active Chat pane ── #}
+  <div class="hd-admin-chat" style="flex:1;">
+    <!-- Chat Header -->
+    <div class="hd-header" style="border-bottom:1px solid var(--hd-border);background:var(--hd-white);padding:.75rem 1.5rem;">
+      <div class="hd-header__info">
+        <h4 class="hd-header__name" style="color:var(--hd-navy);font-size:1rem;">{{ session.visitor_name }}</h4>
+        <div style="font-size:.78rem;color:#888;">
+          Email: <a href="mailto:{{ session.visitor_email }}">{{ session.visitor_email }}</a>
+          {% if session.visitor_phone %} &nbsp;·&nbsp; Phone: <a href="tel:{{ session.visitor_phone }}">{{ session.visitor_phone }}</a>{% endif %}
+          &nbsp;·&nbsp; Subject: <strong>{{ session.subject|default:"Support Request" }}</strong>
+        </div>
+      </div>
+      <div class="d-flex gap-2">
+        <form method="post" action="{% url 'helpdesk:helpdesk_close' session.id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check me-1"></i>Resolve Session</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Message list -->
+    <div id="hd-admin-messages" class="hd-messages" data-session-id="{{ session.id }}" data-session-key="{{ session.session_key }}" style="background:var(--hd-off);">
+      {% for msg in messages_list %}
+      <div class="hd-msg {{ msg.sender_type }}" data-msg-id="{{ msg.id }}">
+        <div class="hd-msg__bubble">{{ msg.message|linebreaksbr }}</div>
+        <div class="hd-msg__meta">
+          {% if msg.sender_type == 'admin' %}{{ msg.sender_name|default:"Support Team" }}{% else %}{{ session.visitor_name }}{% endif %} · {{ msg.sent_at|date:"H:i" }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Input Reply Panel -->
+    <form id="hd-admin-reply-form" method="post" action="{% url 'helpdesk:helpdesk_admin_detail' session.id %}">
+      {% csrf_token %}
+      <div class="hd-admin-chat__input">
+        <textarea id="hd-admin-reply-input" name="message" placeholder="Type your reply here... (Ctrl+Enter to send)" rows="2" required></textarea>
+        <button type="submit" class="hd-send-btn"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/helpdesk.js' %}"></script>
+{% endblock %}
