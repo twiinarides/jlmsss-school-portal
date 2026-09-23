@@ -1,0 +1,979 @@
+/* Jazzmin custom branding */
+
+:root {
+  --jlmss-navy: #0B1F3A;
+  --jlmss-navy-2: #0F2A4D;
+  --jlmss-gold: #D4AF37;
+  --jlmss-bg: #F4F6F9;
+  --jlmss-surface: #FFFFFF;
+  --jlmss-text: #1F2937;
+  --jlmss-text-muted: #6B7280;
+  --jlmss-border: #D1D5DB;
+  --jlmss-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --jlmss-glass-bg: rgba(255, 255, 255, 0.65);
+  --jlmss-glass-border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Page background + typography */
+body {
+  font-family: Inter, Poppins, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  color: var(--jlmss-text);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+.content-wrapper {
+  background: var(--jlmss-bg) !important;
+}
+
+/* Standard spacing + layout rhythm */
+.content-header {
+  padding: 18px 20px 10px 20px;
+}
+
+.content {
+  padding: 0 20px 30px 20px;
+}
+
+/* Mobile-first spacing normalization */
+@media (max-width: 767.98px) {
+  .content-header {
+    padding: 16px 15px 8px 15px;
+  }
+
+  .content {
+    padding: 0 15px 20px 15px;
+  }
+
+  .jlmss-section {
+    margin-bottom: 20px;
+  }
+
+  .jlmss-card-pad {
+    padding: 15px;
+  }
+}
+
+/* Section spacing system */
+.jlmss-section {
+  margin-bottom: 30px;
+}
+
+/* Breadcrumbs: keep light + readable */
+.breadcrumb {
+  background: transparent !important;
+}
+
+/* Prevent long text from breaking layouts */
+.content-wrapper * {
+  min-width: 0;
+}
+
+/* Change form: keep layout clear without affecting inner grid rows */
+@media (max-width: 767.98px) {
+  .change-form #content-main > form > .row > .col-12.col-lg-9,
+  .change-form #content-main > form > .row > .col-12.col-lg-3 {
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+
+  .change-form #content-main > form > .row {
+    row-gap: 16px;
+  }
+
+  .submit-row {
+    padding: 12px;
+  }
+
+  .submit-row input,
+  .submit-row a.deletelink {
+    width: 100%;
+    margin: 0 0 10px 0 !important;
+  }
+}
+
+/* Ensure submit row stays clear and readable */
+.submit-row {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.breadcrumb-item,
+.breadcrumb-item a {
+  color: var(--jlmss-text-muted) !important;
+  font-weight: 700;
+}
+
+.breadcrumb-item.active {
+  color: var(--jlmss-text) !important;
+}
+
+.content-header h1,
+.content-header .h1,
+.content-header h2,
+.content-header .h2 {
+  font-weight: 900;
+  letter-spacing: 0.2px;
+}
+
+/* Typography scaling */
+.content-header h1,
+.content-header .h1 {
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+}
+
+.content-header h2,
+.content-header .h2 {
+  font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+}
+
+/* Breadcrumb + action wrap */
+.content-header .breadcrumb {
+  flex-wrap: wrap;
+}
+
+.object-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.object-tools a {
+  margin-left: 0 !important;
+}
+
+/* Dashboard header actions */
+@media (max-width: 767.98px) {
+  .jlmss-dashboard-actions {
+    width: 100%;
+  }
+
+  .jlmss-dashboard-actions .btn {
+    width: 100%;
+  }
+}
+
+/* Glass utility (subtle + readable) */
+.jlmss-glass {
+  background: var(--jlmss-glass-bg);
+  backdrop-filter: blur(14px);
+  border: var(--jlmss-glass-border);
+  border-radius: 14px;
+  box-shadow: var(--jlmss-shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.jlmss-surface {
+  background: var(--jlmss-surface);
+  border: 1px solid rgba(17, 24, 39, 0.06);
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.jlmss-elevate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.10);
+}
+
+.jlmss-card-pad {
+  padding: 20px;
+}
+
+.jlmss-muted {
+  color: var(--jlmss-text-muted) !important;
+}
+
+/* Top navbar */
+.main-header.navbar,
+.navbar-dark {
+  background-color: var(--jlmss-navy) !important;
+}
+
+/* User menu dropdown: ensure visible + readable */
+.main-header.navbar {
+  overflow: visible !important;
+}
+
+.navbar-nav .dropdown-menu {
+  background: #ffffff !important;
+  border: 1px solid rgba(17, 24, 39, 0.10) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14) !important;
+  padding: 8px !important;
+  z-index: 1100;
+}
+
+/* If dropdown JS fails, still allow access via hover for desktop */
+#jazzy-navbar .nav-item.dropdown:hover > #jazzy-usermenu {
+  display: block !important;
+}
+
+/* Also allow click/focus access (keyboard + touch) */
+#jazzy-navbar .nav-item.dropdown {
+  position: relative;
+  padding-bottom: 10px;
+}
+
+#jazzy-navbar .nav-item.dropdown:focus-within > #jazzy-usermenu {
+  display: block !important;
+}
+
+/* Ensure the menu is visible when Bootstrap adds .show */
+#jazzy-usermenu.show {
+  display: block !important;
+}
+
+#jazzy-usermenu {
+  min-width: 240px;
+  right: 0 !important;
+  left: auto !important;
+  margin-top: 0;
+}
+
+.navbar-nav .dropdown-item {
+  color: var(--jlmss-text) !important;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.navbar-nav .dropdown-item:hover,
+.navbar-nav .dropdown-item:focus {
+  background: rgba(11, 31, 58, 0.06) !important;
+  color: var(--jlmss-navy) !important;
+}
+
+.navbar-nav .dropdown-divider {
+  border-top: 1px solid rgba(17, 24, 39, 0.08) !important;
+}
+
+/* Sidebar */
+.main-sidebar {
+  background-color: var(--jlmss-navy-2) !important;
+}
+
+/* Sidebar drawer behavior (<1024px) */
+.jlmss-admin-scroll-lock {
+  overflow: hidden !important;
+}
+
+.jlmss-sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 1030;
+}
+
+.jlmss-sidebar-overlay.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (max-width: 1023.98px) {
+  .main-sidebar {
+    position: fixed !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1035;
+    transform: translateX(-102%);
+    transition: transform 0.28s ease;
+    will-change: transform;
+  }
+
+  body.sidebar-open .main-sidebar {
+    transform: translateX(0);
+  }
+
+  .content-wrapper,
+  .main-footer,
+  .main-header {
+    margin-left: 0 !important;
+  }
+}
+
+/* Dashboard KPI grid system */
+.jlmss-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.jlmss-kpi-grid > [class^="col"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 0 0 auto !important;
+}
+
+@media (max-width: 1023.98px) {
+  .jlmss-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767.98px) {
+  .jlmss-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Quick navigation: stack cleanly on mobile */
+@media (max-width: 767.98px) {
+  .jlmss-quicknav-grid > [class^="col"] {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Tables: allow horizontal scroll only when needed */
+.table-responsive {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Global table fallback (some admin pages render raw tables) */
+@media (max-width: 767.98px) {
+  .content-wrapper table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .table {
+    font-size: 0.92rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.65rem 0.7rem;
+    white-space: nowrap;
+  }
+
+  /* Changelist header controls wrap cleanly */
+  #changelist .changelist-form {
+    overflow-x: hidden;
+  }
+
+  #changelist .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  #changelist .actions select,
+  #changelist .actions button,
+  #changelist .actions .button {
+    width: 100%;
+    margin: 0 !important;
+  }
+
+  #changelist .search-container,
+  #changelist #toolbar,
+  #changelist .actions {
+    width: 100%;
+  }
+
+  #changelist #toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  #changelist #toolbar form {
+    width: 100%;
+  }
+
+  #changelist #toolbar input[type="text"],
+  #changelist #toolbar input[type="search"],
+  #changelist #toolbar select {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Right-side filter panel becomes full width */
+  #changelist-filter {
+    float: none !important;
+    width: 100% !important;
+    margin: 12px 0 0 0 !important;
+  }
+
+  #changelist-filter h2 {
+    font-size: 1rem;
+  }
+}
+
+/* Forms: prevent widget overflow */
+.form-row,
+.aligned .form-row {
+  overflow: visible;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="url"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+  max-width: 100%;
+}
+
+.related-widget-wrapper {
+  max-width: 100%;
+}
+
+.brand-link {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10) !important;
+}
+
+/* Sidebar icon alignment + spacing */
+.nav-sidebar .nav-link {
+  padding-top: 0.65rem;
+  padding-bottom: 0.65rem;
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.nav-sidebar .nav-icon {
+  width: 1.25rem;
+  margin-right: 0.65rem;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+/* Sidebar active + hover */
+.nav-sidebar .nav-item > .nav-link.active,
+.nav-sidebar .nav-item > .nav-link:hover {
+  background: rgba(212, 175, 55, 0.18) !important;
+  color: #fff !important;
+}
+
+.nav-sidebar .nav-item > .nav-link.active {
+  box-shadow: inset 3px 0 0 var(--jlmss-gold);
+}
+
+/* Sidebar section label (if Jazzmin renders headers) */
+.nav-sidebar .nav-header {
+  color: rgba(255, 255, 255, 0.72) !important;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  padding-top: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+/* Links (keep navy, no gold links) */
+a,
+.btn-link {
+  color: var(--jlmss-navy);
+}
+
+a:hover,
+.btn-link:hover {
+  color: #08172b;
+}
+
+/* Buttons: enterprise standardization */
+.btn {
+  border-radius: 8px !important;
+  padding: 10px 18px !important;
+  font-weight: 500;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Django admin action buttons (submit-row/object-tools/etc) - enforce readable labels */
+.submit-row input,
+.submit-row button,
+.submit-row a,
+#changelist .actions .button,
+#changelist .actions button,
+#changelist .actions input[type="submit"],
+a.button,
+input.button,
+button.button,
+input[type="submit"],
+input[type="button"],
+button[type="submit"] {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  line-height: 1.2 !important;
+  cursor: pointer;
+}
+
+:root {
+  --jlmss-action-save: #1E3A8A;
+  --jlmss-action-save-hover: #1B357F;
+  --jlmss-action-continue: #2563EB;
+  --jlmss-action-continue-hover: #1D4ED8;
+  --jlmss-action-addanother: #16A34A;
+  --jlmss-action-addanother-hover: #15803D;
+  --jlmss-action-add: #22C55E;
+  --jlmss-action-add-hover: #16A34A;
+  --jlmss-action-edit: #F59E0B;
+  --jlmss-action-edit-hover: #D97706;
+  --jlmss-action-publish: #4F46E5;
+  --jlmss-action-publish-hover: #4338CA;
+  --jlmss-action-delete: #DC2626;
+  --jlmss-action-delete-hover: #B91C1C;
+  --jlmss-action-cancel: #E5E7EB;
+  --jlmss-action-cancel-hover: #D1D5DB;
+  --jlmss-action-cancel-text: #1F2937;
+  --jlmss-action-secondary-border: #CBD5E1;
+  --jlmss-action-secondary-text: #334155;
+  --jlmss-action-secondary-hover: #F1F5F9;
+}
+
+/* Default appearance for generic Django admin buttons */
+a.button,
+input.button,
+button.button,
+input[type="submit"],
+button[type="submit"],
+#changelist .actions .button,
+#changelist .actions button,
+#changelist .actions input[type="submit"],
+.submit-row button,
+#changelist .actions .button,
+#changelist .actions button,
+#changelist .actions input[type="submit"] {
+  background: var(--jlmss-action-save) !important;
+  border: 1px solid var(--jlmss-action-save) !important;
+}
+
+/* Semantic mapping: submit-row */
+.submit-row input.default,
+.submit-row button.default,
+.submit-row input[name="_save"],
+.submit-row button[name="_save"],
+input.default {
+  background: var(--jlmss-action-save) !important;
+  border: 1px solid var(--jlmss-action-save) !important;
+}
+
+.submit-row input[name="_continue"],
+.submit-row button[name="_continue"] {
+  background: var(--jlmss-action-continue) !important;
+  border: 1px solid var(--jlmss-action-continue) !important;
+}
+
+.submit-row input[name="_addanother"],
+.submit-row button[name="_addanother"] {
+  background: var(--jlmss-action-addanother) !important;
+  border: 1px solid var(--jlmss-action-addanother) !important;
+}
+
+/* Semantic mapping: object-tools (Add/New/Create) */
+.object-tools a.addlink,
+.object-tools a[href*="/add/"] {
+  background: var(--jlmss-action-add) !important;
+  border: 1px solid var(--jlmss-action-add) !important;
+  color: #ffffff !important;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+/* Semantic mapping: object-tools (everything else -> secondary) */
+.object-tools a:not(.addlink):not(.deletelink):not([href*="/add/"]) {
+  background: transparent !important;
+  border: 1px solid var(--jlmss-action-secondary-border) !important;
+  color: var(--jlmss-action-secondary-text) !important;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.object-tools a:not(.addlink):not(.deletelink):not([href*="/add/"]):hover {
+  background: var(--jlmss-action-secondary-hover) !important;
+}
+
+/* Semantic mapping: changelist actions submit/go button */
+#changelist .actions .button,
+#changelist .actions button,
+#changelist .actions input[type="submit"] {
+  background: var(--jlmss-action-save) !important;
+  border: 1px solid var(--jlmss-action-save) !important;
+}
+
+/* Optional semantic hooks if your admin templates use bootstrap-like classes */
+.btn-success {
+  background: var(--jlmss-action-addanother) !important;
+  border-color: var(--jlmss-action-addanother) !important;
+  color: #ffffff !important;
+}
+
+.btn-success:hover {
+  background: var(--jlmss-action-addanother-hover) !important;
+  border-color: var(--jlmss-action-addanother-hover) !important;
+}
+
+.btn-info {
+  background: var(--jlmss-action-publish) !important;
+  border-color: var(--jlmss-action-publish) !important;
+  color: #ffffff !important;
+}
+
+.btn-info:hover {
+  background: var(--jlmss-action-publish-hover) !important;
+  border-color: var(--jlmss-action-publish-hover) !important;
+}
+
+.btn-outline-secondary {
+  background: transparent !important;
+  border-color: var(--jlmss-action-secondary-border) !important;
+  color: var(--jlmss-action-secondary-text) !important;
+}
+
+.btn-outline-secondary:hover {
+  background: var(--jlmss-action-secondary-hover) !important;
+}
+
+/* Cancel/close links in submit row */
+.submit-row a:not(.deletelink):not([href*="/delete/"]) {
+  background: var(--jlmss-action-cancel) !important;
+  border: 1px solid var(--jlmss-action-cancel) !important;
+  color: var(--jlmss-action-cancel-text) !important;
+}
+
+.submit-row a:not(.deletelink):not([href*="/delete/"]):hover {
+  background: var(--jlmss-action-cancel-hover) !important;
+  border-color: var(--jlmss-action-cancel-hover) !important;
+}
+
+/* Hover states */
+.submit-row input.default:hover,
+.submit-row button.default:hover,
+.submit-row input[name="_save"]:hover,
+.submit-row button[name="_save"]:hover,
+input.default:hover {
+  background: var(--jlmss-action-save-hover) !important;
+  border-color: var(--jlmss-action-save-hover) !important;
+}
+
+.submit-row input[name="_continue"]:hover,
+.submit-row button[name="_continue"]:hover {
+  background: var(--jlmss-action-continue-hover) !important;
+  border-color: var(--jlmss-action-continue-hover) !important;
+}
+
+.submit-row input[name="_addanother"]:hover,
+.submit-row button[name="_addanother"]:hover {
+  background: var(--jlmss-action-addanother-hover) !important;
+  border-color: var(--jlmss-action-addanother-hover) !important;
+}
+
+.object-tools a.addlink:hover,
+.object-tools a[href*="/add/"]:hover {
+  background: var(--jlmss-action-add-hover) !important;
+  border-color: var(--jlmss-action-add-hover) !important;
+}
+
+#changelist .actions .button:hover,
+#changelist .actions button:hover,
+#changelist .actions input[type="submit"]:hover {
+  background: var(--jlmss-action-save-hover) !important;
+  border-color: var(--jlmss-action-save-hover) !important;
+}
+
+/* Delete/danger actions */
+.submit-row a.deletelink,
+a.deletelink,
+.deletelink-box a,
+.object-tools a.deletelink {
+  background: var(--jlmss-action-delete) !important;
+  border: 1px solid var(--jlmss-action-delete) !important;
+  color: #ffffff !important;
+}
+
+/* Jazzmin submit-line delete action is a normal link without .deletelink */
+.submit-row a[href*="/delete/"] {
+  background: var(--jlmss-action-delete) !important;
+  border: 1px solid var(--jlmss-action-delete) !important;
+  color: #ffffff !important;
+}
+
+.submit-row a.deletelink:hover,
+a.deletelink:hover,
+.deletelink-box a:hover,
+.object-tools a.deletelink:hover {
+  background: var(--jlmss-action-delete-hover) !important;
+  border-color: var(--jlmss-action-delete-hover) !important;
+}
+
+.submit-row a[href*="/delete/"]:hover {
+  background: var(--jlmss-action-delete-hover) !important;
+  border-color: var(--jlmss-action-delete-hover) !important;
+}
+
+/* Delete confirmation page: Jazzmin uses form-control inputs for actions */
+.delete-confirmation input[type="submit"].form-control,
+.delete-confirmation input[type="submit"].btn,
+.delete-confirmation form input[type="submit"] {
+  background: var(--jlmss-action-delete) !important;
+  border: 1px solid var(--jlmss-action-delete) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.delete-confirmation input[type="submit"].form-control:hover,
+.delete-confirmation input[type="submit"].btn:hover,
+.delete-confirmation form input[type="submit"]:hover {
+  background: var(--jlmss-action-delete-hover) !important;
+  border-color: var(--jlmss-action-delete-hover) !important;
+}
+
+.delete-confirmation a.cancel-link,
+.delete-confirmation a.button.cancel-link {
+  background: var(--jlmss-action-cancel) !important;
+  border: 1px solid var(--jlmss-action-cancel) !important;
+  color: var(--jlmss-action-cancel-text) !important;
+  font-weight: 700 !important;
+}
+
+.delete-confirmation a.cancel-link:hover,
+.delete-confirmation a.button.cancel-link:hover {
+  background: var(--jlmss-action-cancel-hover) !important;
+  border-color: var(--jlmss-action-cancel-hover) !important;
+  color: var(--jlmss-action-cancel-text) !important;
+}
+
+/* Secondary actions (Cancel / History / etc) */
+.submit-row a,
+.submit-row input,
+a.button,
+input.button,
+button.button {
+  border-radius: 8px !important;
+  padding: 10px 18px !important;
+}
+
+.submit-row a {
+  text-decoration: none !important;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:focus {
+  box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25) !important;
+}
+
+.btn-primary {
+  background-color: var(--jlmss-navy) !important;
+  border-color: var(--jlmss-navy) !important;
+  color: #fff !important;
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  filter: brightness(0.95);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(11, 31, 58, 0.18);
+}
+
+.btn-outline-primary {
+  color: var(--jlmss-navy) !important;
+  border-color: var(--jlmss-navy) !important;
+  background: #fff !important;
+  font-weight: 500;
+}
+
+.btn-outline-primary:hover {
+  background: rgba(11, 31, 58, 0.06) !important;
+}
+
+.btn-warning {
+  background-color: var(--jlmss-gold) !important;
+  border-color: var(--jlmss-gold) !important;
+  color: #111827 !important;
+  font-weight: 500;
+}
+
+.btn-warning:hover {
+  filter: brightness(0.95);
+}
+
+.btn-warning:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(212, 175, 55, 0.22);
+}
+
+.btn-danger {
+  font-weight: 800;
+}
+
+.btn-danger,
+.btn-success,
+.btn-secondary,
+.btn-info,
+.btn-dark {
+  color: #ffffff !important;
+}
+
+.btn-secondary {
+  background: #E5E7EB !important;
+  border-color: #E5E7EB !important;
+  color: #1F2937 !important;
+}
+
+/* Tables */
+.table {
+  background: var(--jlmss-surface);
+}
+
+.table td,
+.table th {
+  padding: 0.85rem 1rem;
+  vertical-align: middle;
+}
+
+.table thead th {
+  background: #F9FAFB;
+  color: var(--jlmss-text-muted);
+  font-weight: 800;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.table-hover tbody tr:hover {
+  background: rgba(11, 31, 58, 0.03);
+}
+
+/* Admin cards/panels */
+.card {
+  background: var(--jlmss-surface) !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(17, 24, 39, 0.06);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+  background: #F9FAFB !important;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08) !important;
+  font-weight: 900;
+  color: var(--jlmss-text);
+}
+
+/* Required asterisk clarity */
+.required label:after {
+  color: #D93025;
+}
+
+/* Errors: clearer banner */
+.errornote,
+.alert-danger {
+  border-radius: 14px !important;
+  font-weight: 700;
+}
+
+/* Help text */
+.help,
+.helptext {
+  color: var(--jlmss-text-muted) !important;
+  font-weight: 600;
+}
+
+.card-title {
+  font-weight: 900;
+}
+
+/* Tabs */
+.nav-tabs .nav-link {
+  font-weight: 800;
+}
+
+.nav-tabs .nav-link.active {
+  border-color: rgba(17, 24, 39, 0.12) rgba(17, 24, 39, 0.12) #fff;
+}
+
+/* Forms */
+.form-control:not(.btn),
+.select2-container--default .select2-selection--single {
+  background: #fff !important;
+  border: 1px solid var(--jlmss-border) !important;
+  border-radius: 10px !important;
+}
+
+.select2-container--default .select2-selection--multiple {
+  background: #fff !important;
+  border: 1px solid var(--jlmss-border) !important;
+  border-radius: 10px !important;
+}
+
+label {
+  font-weight: 800;
+  color: var(--jlmss-text);
+}
+
+fieldset.module {
+  border-radius: 14px;
+}
+
+.form-control:focus,
+.select2-container--default.select2-container--focus .select2-selection--single {
+  border-color: rgba(212, 175, 55, 0.9) !important;
+  box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.18) !important;
+}
+
+/* Remove any dark badges/backgrounds carried by theme */
+.bg-dark,
+.badge-dark {
+  background: #111827 !important;
+}
+
+/* Login page logo */
+.login-logo img,
+.brand-image {
+  background: #ffffff;
+  border-radius: 999px;
+  padding: 10px;
+  box-shadow: 0 12px 30px rgba(11, 31, 58, 0.18);
+}
+
+/* Sidebar brand logo */
+.brand-link .brand-image {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  padding: 7px;
+}
+
+/* Allow long brand name to wrap to two lines */
+.brand-link {
+  align-items: center;
+}
+
+.brand-link .brand-text {
+  white-space: normal !important;
+  line-height: 1.15;
+  display: inline-block;
+  max-width: 180px;
+}
+
+@media (max-width: 767.98px) {
+  .brand-link .brand-text {
+    max-width: 140px;
+  }
+}
+
+/* Login logo sizing (keep crisp) */
+.login-logo img {
+  width: 88px;
+  height: 88px;
+  object-fit: contain;
+}
