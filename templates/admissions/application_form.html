@@ -1,0 +1,1 @@
+{% extends 'admissions/base_admission.html' %}{% block content %}<h2>Application Form</h2><p>Form sections go here. Proceed to upload when ready.</p><a href='{% url "admissions:document_upload" application.application_number %}' class='btn adm-btn-primary'>Next: Documents</a>{% endblock %}
