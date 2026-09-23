@@ -1,0 +1,134 @@
+{% extends 'school/base.html' %}
+
+{% block title %}News - {{ school_info.name }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="mb-4">
+            <h2 class="section-title mb-2">Latest News & Updates</h2>
+            <p class="text-muted">Stay informed about what's happening at our school</p>
+        </div>
+        
+        <!-- Category Filter -->
+        {% if categories %}
+        <div class="mb-4">
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'news_list' %}" 
+                   class="btn btn-sm {% if not category_slug %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                    All
+                </a>
+                {% for category in categories %}
+                <a href="{% url 'news_list' %}?category={{ category.slug }}" 
+                   class="btn btn-sm {% if category_slug == category.slug %}btn-primary{% else %}btn-outline-primary{% endif %}"
+                   style="{% if category_slug == category.slug %}background-color: {{ category.color }}; border-color: {{ category.color }};{% endif %}">
+                    {{ category.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Search Form -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <form method="get" class="d-flex">
+                    <input type="text" name="search" class="form-control me-2" placeholder="Search news..." value="{{ search_query }}">
+                    {% if category_slug %}
+                    <input type="hidden" name="category" value="{{ category_slug }}">
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            {% for article in news %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm" style="transition: transform 0.3s;">
+                    {% if article.image %}
+                        <img src="{{ article.image.url }}" class="card-img-top" alt="{{ article.title }}" style="height: 200px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            {% if article.category %}
+                            <span class="badge" style="background-color: {{ article.category.color }};">{{ article.category.name }}</span>
+                            {% endif %}
+                            {% if article.is_featured %}
+                            <span class="badge bg-warning">Featured</span>
+                            {% endif %}
+                        </div>
+                        <h5 class="card-title">{{ article.title }}</h5>
+                        <p class="card-text text-muted">{{ article.content|safe|truncatewords:25 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{{ article.get_absolute_url }}" class="btn btn-sm btn-primary">Read Story</a>
+                            <div class="share-buttons">
+                                <a href="https://wa.me/?text={{ article.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'news_detail' article.slug %}" 
+                                   target="_blank" 
+                                   class="btn btn-sm btn-success" 
+                                   title="Share on WhatsApp">
+                                    <i class="fab fa-whatsapp"></i>
+                                </a>
+                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'news_detail' article.slug %}" 
+                                   target="_blank" 
+                                   class="btn btn-sm" 
+                                   style="background-color: #1877f2; color: white;"
+                                   title="Share on Facebook">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-0">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>{{ article.created_at|date:"M d, Y" }}
+                            <i class="fas fa-eye ms-3 me-1"></i>{{ article.views }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>No news articles found.
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if news.has_other_pages %}
+        <nav aria-label="News pagination">
+            <ul class="pagination justify-content-center">
+                {% if news.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ news.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Previous</a>
+                    </li>
+                {% endif %}
+                
+                {% for num in news.paginator.page_range %}
+                    {% if news.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% elif num > news.number|add:'-3' and num < news.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if news.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ news.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
