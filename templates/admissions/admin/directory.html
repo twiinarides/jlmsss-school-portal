@@ -1,0 +1,1 @@
+{% extends 'admissions/base_admission.html' %}{% block content %}<h2>Applications Directory</h2><ul>{% for app in applications %}<li><a href='{% url "admissions:staff_review" app.application_number %}'>{{ app.application_number }}</a></li>{% endfor %}</ul>{% endblock %}
