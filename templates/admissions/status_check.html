@@ -1,0 +1,62 @@
+{% extends 'school/base.html' %}
+{% load static admission_tags %}
+
+{% block title %}Track Application Status — Admissions{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/admission.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admission-wrapper">
+  <div class="container py-5">
+    
+    <div class="adm-auth-card">
+      <div class="adm-auth-header">
+        <div class="badge-logo">
+          {% if school_info.logo %}
+          <img src="{{ school_info.logo.url }}" alt="School Logo">
+          {% else %}
+          <i class="fas fa-graduation-cap fa-2x" style="color:var(--adm-gold);"></i>
+          {% endif %}
+        </div>
+        <h2>Track Application Status</h2>
+        <p>Enter your details below to track your application.</p>
+      </div>
+      
+      <div class="adm-auth-body">
+        {% if messages %}
+        {% for msg in messages %}
+        <div class="alert alert-{{ msg.tags|default:'info' }} alert-dismissible fade show mb-3" role="alert">
+          {{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        
+        <form method="post" id="status-check-form">
+          {% csrf_token %}
+          
+          <div class="mb-3">
+            <label class="form-label font-weight-bold" for="app_number">Application Number</label>
+            <input type="text" name="app_number" id="app_number" class="form-control" placeholder="e.g. JLMSSS-2025-000001" required autocomplete="off">
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label font-weight-bold" for="email">Applicant Email Address</label>
+            <input type="email" name="email" id="email" class="form-control" placeholder="Enter your email" required autocomplete="email">
+          </div>
+          
+          <button type="submit" class="adm-btn adm-btn-primary w-100 mt-3 py-2">
+            <i class="fas fa-search me-2"></i>Track Status
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/admission.js' %}"></script>
+{% endblock %}
