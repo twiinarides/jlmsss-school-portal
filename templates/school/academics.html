@@ -1,0 +1,81 @@
+{% extends 'school/base.html' %}
+
+{% block title %}Academics - {{ school_info.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <h1 class="display-4 fw-bold mb-4" style="color: var(--primary-blue);">Academics</h1>
+            
+            {% if page %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    {{ page.content|safe }}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if performance_records %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="h5 mb-0"><i class="fas fa-chart-line me-2"></i>Academic Performance Records</h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        {% for record in performance_records %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card border h-100 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="card-title mb-0">{{ record.title }}</h5>
+                                        <span class="badge bg-secondary">{{ record.year }}</span>
+                                    </div>
+                                    {% if record.term %}
+                                    <p class="text-muted small mb-2">
+                                        <i class="fas fa-calendar me-1"></i>{{ record.get_term_display }}
+                                    </p>
+                                    {% endif %}
+                                    {% if record.level %}
+                                    <p class="text-muted small mb-2">
+                                        <i class="fas fa-graduation-cap me-1"></i>{{ record.get_level_display }}
+                                    </p>
+                                    {% endif %}
+                                    {% if record.summary %}
+                                    <p class="card-text small">{{ record.summary|truncatewords:25 }}</p>
+                                    {% elif record.description %}
+                                    <div class="mb-2 small">{{ record.description|safe|truncatewords:20 }}</div>
+                                    {% endif %}
+                                    {% if record.document %}
+                                    <a href="{{ record.document.url }}" class="btn btn-primary btn-sm mt-2" target="_blank">
+                                        <i class="fas fa-file-pdf me-1"></i>View/Download
+                                    </a>
+                                    {% else %}
+                                    <span class="badge bg-warning text-dark mt-2">Document pending</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>No academic performance records have been published yet. Please check back later.
+            </div>
+            {% endif %}
+            
+            {% if school_info %}
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h3 class="h5 mb-3"><i class="fas fa-info-circle me-2"></i>Academic Information</h3>
+                    <p>For more information about our academic programs, please contact us.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
