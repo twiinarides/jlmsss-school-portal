@@ -1,0 +1,149 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-dark kaba-navbar">
+    <div class="container position-relative kaba-nav-container">
+        <!-- Mobile Logo (visible only on mobile) -->
+        <a href="{% url 'home' %}" class="kaba-brand-center d-lg-none" aria-label="Home">
+            <span class="kaba-brand-ring">
+                <img src="{% static 'img/school-badge.png' %}" alt="" class="kaba-brand-img">
+            </span>
+        </a>
+
+        <button class="navbar-toggler ms-auto" type="button" data-drawer-open aria-controls="kabaDrawer" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Desktop Navigation Grid -->
+        <div class="kaba-desktop-nav d-none d-lg-block w-100">
+            <div class="w-100 kaba-nav-grid">
+                <ul class="navbar-nav kaba-nav-left">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                    {% if not website_config or website_config.show_about_link %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'about_us' %}">About</a></li>
+                    {% endif %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'student_life' %}">Student Life</a></li>
+
+                    {% if not website_config or website_config.show_academics_link %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="academicsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Academics
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="academicsDropdown">
+                            <li><a class="dropdown-item" href="{% url 'academics' %}">Academic Performance</a></li>
+                            <li><a class="dropdown-item" href="{% url 'departments' %}">Departments</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+
+                    {% if not website_config or website_config.show_admission_link %}
+                    <li class="nav-item"><a class="nav-link" href="https://admission.jananluwummemorialsss.sc.ug">Admissions</a></li>
+                    {% endif %}
+                </ul>
+
+                <!-- Desktop Logo (in center column of grid) -->
+                <div class="kaba-brand-desktop-container d-flex justify-content-center align-items-center">
+                    <a href="{% url 'home' %}" class="kaba-brand-desktop" aria-label="Home">
+                        <span class="kaba-brand-ring">
+                            <img src="{% static 'img/school-badge.png' %}" alt="" class="kaba-brand-img">
+                        </span>
+                    </a>
+                </div>
+
+                <ul class="navbar-nav kaba-nav-right">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="staffDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Staff
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="staffDropdown">
+                            <li><a class="dropdown-item" href="{% url 'staff' %}">All Staff</a></li>
+                            <li><a class="dropdown-item" href="{% url 'staff' %}?position=headteacher">Headteacher</a></li>
+                            <li><a class="dropdown-item" href="{% url 'staff' %}?position=deputy">Deputy Headteacher</a></li>
+                            <li><a class="dropdown-item" href="{% url 'staff' %}?position=teacher">Teachers</a></li>
+                            <li><a class="dropdown-item" href="{% url 'staff' %}?position=administrator">Administrators</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="newsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            News
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="newsDropdown">
+                            <li><a class="dropdown-item" href="{% url 'news_list' %}">All News</a></li>
+                            <li><a class="dropdown-item" href="{% url 'announcements' %}">Announcements</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item"><a class="nav-link" href="{% url 'events' %}">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'gallery' %}">Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+<div class="kaba-drawer" id="kabaDrawer" aria-hidden="true">
+    <div class="kaba-drawer__overlay" data-drawer-close tabindex="-1" aria-hidden="true"></div>
+    <aside class="kaba-drawer__panel" role="dialog" aria-modal="true" aria-label="Site navigation">
+        <div class="kaba-drawer__head">
+            <a href="{% url 'home' %}" class="kaba-drawer__brand">
+                <span class="kaba-drawer__badge">
+                    <img src="{% static 'img/school-badge.png' %}" alt="">
+                </span>
+                <span class="kaba-drawer__brandtext">{% if school_info %}{{ school_info.name }}{% else %}School{% endif %}</span>
+            </a>
+            <button type="button" class="kaba-drawer__close" data-drawer-close aria-label="Close menu">
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+
+        <nav class="kaba-drawer__nav" aria-label="Mobile navigation">
+            <a class="kaba-drawer__link" href="{% url 'home' %}">Home</a>
+            {% if not website_config or website_config.show_about_link %}
+            <a class="kaba-drawer__link" href="{% url 'about_us' %}">About</a>
+            {% endif %}
+            <a class="kaba-drawer__link" href="{% url 'student_life' %}">Student Life</a>
+
+            {% if not website_config or website_config.show_academics_link %}
+            <button class="kaba-drawer__link kaba-drawer__link--toggle" type="button" data-drawer-accordion aria-expanded="false" aria-controls="drawerAcademics">
+                <span>Academics</span>
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <div class="kaba-drawer__submenu" id="drawerAcademics" hidden>
+                <a class="kaba-drawer__sublink" href="{% url 'academics' %}">Academic Performance</a>
+                <a class="kaba-drawer__sublink" href="{% url 'departments' %}">Departments</a>
+            </div>
+            {% endif %}
+
+            {% if not website_config or website_config.show_admission_link %}
+            <a class="kaba-drawer__link" href="https://admission.jananluwummemorialsss.sc.ug">Admissions</a>
+            {% endif %}
+
+            <button class="kaba-drawer__link kaba-drawer__link--toggle" type="button" data-drawer-accordion aria-expanded="false" aria-controls="drawerStaff">
+                <span>Staff</span>
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <div class="kaba-drawer__submenu" id="drawerStaff" hidden>
+                <a class="kaba-drawer__sublink" href="{% url 'staff' %}">All Staff</a>
+                <a class="kaba-drawer__sublink" href="{% url 'staff' %}?position=headteacher">Headteacher</a>
+                <a class="kaba-drawer__sublink" href="{% url 'staff' %}?position=deputy">Deputy Headteacher</a>
+                <a class="kaba-drawer__sublink" href="{% url 'staff' %}?position=teacher">Teachers</a>
+                <a class="kaba-drawer__sublink" href="{% url 'staff' %}?position=administrator">Administrators</a>
+            </div>
+
+            <button class="kaba-drawer__link kaba-drawer__link--toggle" type="button" data-drawer-accordion aria-expanded="false" aria-controls="drawerNews">
+                <span>News</span>
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <div class="kaba-drawer__submenu" id="drawerNews" hidden>
+                <a class="kaba-drawer__sublink" href="{% url 'news_list' %}">All News</a>
+                <a class="kaba-drawer__sublink" href="{% url 'announcements' %}">Announcements</a>
+            </div>
+
+            <a class="kaba-drawer__link" href="{% url 'events' %}">Events</a>
+            <a class="kaba-drawer__link" href="{% url 'gallery' %}">Gallery</a>
+            <a class="kaba-drawer__link" href="{% url 'contact' %}">Contact</a>
+        </nav>
+    </aside>
+</div>
