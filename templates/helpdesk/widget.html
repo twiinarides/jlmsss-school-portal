@@ -1,0 +1,135 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/helpdesk.css' %}">
+
+<!-- Floating Action Button -->
+<button id="hd-fab" class="hd-fab" aria-label="Support Chat" aria-haspopup="dialog">
+  <span class="hd-fab-icon-open"><i class="fas fa-headset"></i></span>
+  <span class="hd-fab-icon-close"><i class="fas fa-times"></i></span>
+  <span id="hd-fab-badge" class="hd-fab-badge">0</span>
+  <span class="hd-fab-tooltip">School Support Desk</span>
+</button>
+
+<!-- Chat Window -->
+<div id="hd-window" class="hd-window" role="dialog" aria-hidden="true">
+
+  <!-- Header -->
+  <div class="hd-header">
+    <div class="hd-header__avatar">
+      {% if school_info.logo %}
+      <img src="{{ school_info.logo.url }}" alt="School Badge">
+      {% else %}
+      <i class="fas fa-graduation-cap text-white" style="font-size:1.2rem;"></i>
+      {% endif %}
+    </div>
+    <div class="hd-header__info">
+      <h4 class="hd-header__name">JLMSSS Support Desk</h4>
+      <div class="hd-header__status">
+        <span class="hd-status-dot"></span>
+        Live Support Available
+      </div>
+    </div>
+    <button id="hd-visitor-end-btn" style="font-size: 0.72rem; font-weight: 700; border-radius: 6px; margin-right: 0.65rem; display: none; background: #B91C2E; border: none; color: white; padding: 0.25rem 0.55rem; cursor: pointer; align-items: center; gap: 0.25rem;" title="End conversation">
+      <i class="fas fa-power-off"></i> End Chat
+    </button>
+    <button class="hd-header__close" data-hd-close aria-label="Close chat">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- INTRO FORM (before session starts) -->
+  <div id="hd-intro" class="hd-intro">
+    <div class="hd-intro__school-info">
+      <p>
+        <strong style="color:#0D2B52;">Need help?</strong><br>
+        Ask about admissions, fees, events, transfers or any school matter. We're here to help!
+      </p>
+    </div>
+
+    <div id="hd-intro-error" class="alert alert-danger p-2" style="font-size:.78rem;display:none;margin-bottom:.5rem;"></div>
+
+    <div class="hd-intro__form">
+      <div>
+        <label for="hd-vis-name">Your Full Name <span class="text-danger">*</span></label>
+        <input type="text" id="hd-vis-name" class="hd-input" placeholder="e.g. Sarah Akello">
+      </div>
+      <div>
+        <label for="hd-vis-email">Email Address <span class="text-danger">*</span></label>
+        <input type="email" id="hd-vis-email" class="hd-input" placeholder="e.g. sarah@example.com">
+      </div>
+      <div>
+        <label for="hd-vis-phone">Phone Number</label>
+        <input type="tel" id="hd-vis-phone" class="hd-input" placeholder="e.g. +256 7XX XXX XXX">
+      </div>
+      <div>
+        <label for="hd-vis-subject">Topic / Subject</label>
+        <input type="text" id="hd-vis-subject" class="hd-input" placeholder="e.g. S.1 Admission inquiry">
+      </div>
+
+      <button id="hd-start-btn"
+        style="
+          display:flex; align-items:center; justify-content:center; gap:.5rem;
+          background:linear-gradient(135deg,#0D2B52,#1B4B8A);
+          color:white; border:none; border-radius:12px;
+          padding:.85rem 1.5rem; font-size:.9rem; font-weight:700;
+          font-family:'Poppins',sans-serif; cursor:pointer; width:100%;
+          margin-top:.5rem; transition:all .2s ease;
+          box-shadow:0 4px 14px rgba(13,43,82,.30);
+        "
+        onmouseover="this.style.background='linear-gradient(135deg,#B91C2E,#8B0000)'"
+        onmouseout="this.style.background='linear-gradient(135deg,#0D2B52,#1B4B8A)'">
+        <i class="fas fa-comments"></i> Start Chat Session
+      </button>
+    </div>
+  </div>
+
+  <!-- CHAT AREA (active session) -->
+  <div id="hd-chat" style="display:none; flex:1; flex-direction:column; overflow:hidden;">
+
+    <!-- Messages Scroll Container -->
+    <div id="hd-messages" class="hd-messages">
+      <!-- Bubbles appended via JS -->
+    </div>
+
+    <!-- Typing indicator -->
+    <div id="hd-typing" class="hd-typing">
+      <div class="hd-typing__bubble">
+        <div class="hd-typing__dot"></div>
+        <div class="hd-typing__dot"></div>
+        <div class="hd-typing__dot"></div>
+      </div>
+    </div>
+
+    <!-- ── INPUT AREA — Very Prominent ── -->
+    <div class="hd-input-area">
+      <textarea
+        id="hd-msg-input"
+        class="hd-message-input"
+        placeholder="Type your message here…"
+        rows="1"
+        aria-label="Type a message"
+      ></textarea>
+
+      <!-- SEND BUTTON — Large, clear, always visible -->
+      <button
+        id="hd-send-btn"
+        class="hd-send-btn"
+        aria-label="Send message"
+        title="Send message (Enter)"
+      >
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+
+    <!-- Keyboard hint -->
+    <div class="hd-send-hint">Press <strong>Enter</strong> to send &nbsp;·&nbsp; <strong>Shift+Enter</strong> for new line</div>
+
+  </div>
+
+  <!-- Footer branding -->
+  <div class="hd-footer-note">
+    <i class="fas fa-shield-alt me-1" style="color:rgba(13,43,82,.35);"></i>JLMSSS Live Support — Secure &amp; Private
+  </div>
+
+</div>
+
+<script src="{% static 'js/helpdesk.js' %}"></script>
