@@ -1,0 +1,56 @@
+{% extends 'school/base.html' %}
+{% load static %}
+
+{% block title %}Live Support Desk — Admin Panel{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/helpdesk.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="hd-admin-layout">
+  
+  {# ── SIDEBAR: Session list ── #}
+  <div class="hd-admin-sidebar">
+    <div class="hd-admin-sidebar__header">
+      <span>Active Sessions</span>
+      {% if open_count %}<span class="badge bg-danger">{{ open_count }} open</span>{% endif %}
+    </div>
+    
+    {% if sessions %}
+    <div class="list-group list-group-flush">
+      {% for s in sessions %}
+      <div class="hd-session-item list-group-item {% if s.id == session.id %}active{% endif %} {% if s.unread_by_admin %}unread{% endif %}"
+           data-session-url="{% url 'helpdesk:helpdesk_admin_detail' s.pk %}">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="hd-session-name">{{ s.visitor_name }}</span>
+          <span class="hd-session-time">{{ s.last_activity_at|date:"H:i" }}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="hd-session-preview text-muted">{{ s.subject|default:"No subject" }}</span>
+          {% if s.unread_by_admin %}
+          <span class="hd-session-badge">{{ s.unread_by_admin }}</span>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5 text-muted">
+      <i class="far fa-comments fa-2x mb-2 d-block"></i>
+      No active chat sessions
+    </div>
+    {% endif %}
+  </div>
+
+  {# ── RIGHT: Chat Pane (Empty state) ── #}
+  <div style="flex:1;background:var(--hd-off);">
+    <div class="hd-empty-chat">
+      <i class="far fa-comments"></i>
+      <h4>Select a Chat Session</h4>
+      <p>Select a chat session from the list on the left to start communicating with the visitor.</p>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
