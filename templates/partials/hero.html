@@ -1,0 +1,59 @@
+{% load static %}
+
+<section class="hero-section py-5">
+    <div id="heroCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel" data-bs-interval="9000" data-bs-pause="false" aria-label="Hero images">
+        {% if hero_carousel_slides %}
+        <div class="carousel-indicators">
+            {% for slide in hero_carousel_slides %}
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ forloop.counter0 }}"{% if forloop.first %} class="active" aria-current="true"{% endif %} aria-label="Slide {{ forloop.counter }}"></button>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="carousel-inner">
+            {% if hero_carousel_slides %}
+                {% for slide in hero_carousel_slides %}
+                <div class="carousel-item{% if forloop.first %} active{% endif %}">
+                    {% if slide.src %}
+                    <img src="{{ slide.src }}" class="d-block w-100" alt="{{ slide.alt }}">
+                    {% else %}
+                    <img src="{% static slide.src_static %}" class="d-block w-100" alt="{{ slide.alt }}">
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="carousel-item active">
+                    {% if website_config and website_config.hero_background_image %}
+                    <img src="{{ website_config.hero_background_image.url }}" class="d-block w-100" alt="Hero">
+                    {% else %}
+                    <img src="{% static 'img/hero.webp' %}" class="d-block w-100" alt="Hero">
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <div class="hero-overlay" style="background: linear-gradient(to bottom, rgba(13, 43, 82, 0.05) 0%, rgba(13, 43, 82, 0.02) 40%, rgba(13, 43, 82, 0.40) 75%, rgba(13, 43, 82, 0.70) 100%);"></div>
+
+    <div class="container hero-content">
+        <div class="row justify-content-center g-4">
+            <div class="col-lg-10">
+                <div class="hero-text-panel text-center">
+                    <h1 class="display-4 fw-bold mb-4 text-white">Welcome to {% if school_info %}{{ school_info.name }}{% else %}our School{% endif %}</h1>
+                    {% if school_info and school_info.motto %}
+                        <p class="lead mb-4 text-white" style="font-size: 1.3rem; opacity: 0.95;">{{ school_info.motto }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
