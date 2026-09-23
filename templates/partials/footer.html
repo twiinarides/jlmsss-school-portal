@@ -1,0 +1,84 @@
+{% load static %}
+
+<footer class="footer">
+    <div class="footer-top">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col footer-col--identity">
+                    <div class="footer-brand">
+                        <div class="footer-brand__logo">
+                            <img src="{% static 'img/school-badge.png' %}" alt="{% if school_info %}{{ school_info.name }}{% else %}School{% endif %}">
+                        </div>
+                        <div class="footer-brand__text">
+                            <div class="footer-brand__name">{% if school_info %}{{ school_info.name }}{% else %}School{% endif %}</div>
+                            {% if school_info and school_info.motto %}
+                            <div class="footer-brand__motto">{{ school_info.motto }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if website_config.footer_text %}
+                    <div class="footer-note">{{ website_config.footer_text|safe }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="footer-col">
+                    <div class="footer-title">Quick Links</div>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        {% if not website_config or website_config.show_about_link %}
+                        <li><a href="{% url 'about_us' %}">About</a></li>
+                        {% endif %}
+                        {% if not website_config or website_config.show_admission_link %}
+                        <li><a href="https://admission.jananluwummemorialsss.sc.ug">Admissions</a></li>
+                        {% endif %}
+                        {% if not website_config or website_config.show_academics_link %}
+                        <li><a href="{% url 'academics' %}">Academics</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'news_list' %}">News</a></li>
+                        <li><a href="{% url 'events' %}">Events</a></li>
+                        <li><a href="{% url 'gallery' %}">Gallery</a></li>
+                        <li><a href="{% url 'contact' %}">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <div class="footer-title">Academics</div>
+                    <ul class="footer-links">
+                        {% if not website_config or website_config.show_academics_link %}
+                        <li><a href="{% url 'academics' %}">O-Level</a></li>
+                        <li><a href="{% url 'academics' %}">A-Level</a></li>
+                        <li><a href="{% url 'departments' %}">Curriculum</a></li>
+                        <li><a href="{% url 'events' %}">Academic Calendar</a></li>
+                        <li><a href="{% url 'academics' %}">Examination Results</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'student_life' %}">Student Life</a></li>
+                        <li><a href="{% url 'student_leaders' %}">Student Leaders</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <div class="footer-title">Contact</div>
+                    {% if school_info %}
+                    <ul class="footer-meta">
+                        <li><i class="fas fa-map-marker-alt"></i><span>{{ school_info.address }}</span></li>
+                        <li><i class="fas fa-phone"></i><span><a href="tel:{{ school_info.phone }}">{{ school_info.phone }}</a></span></li>
+                        <li><i class="fas fa-envelope"></i><span><a href="mailto:{{ school_info.email }}">{{ school_info.email }}</a></span></li>
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <div class="container">
+            <div class="footer-bottom__inner">
+                <div class="footer-bottom__copy">© {% now "Y" %} {% if school_info %}{{ school_info.name }}{% else %}School{% endif %}. All rights reserved.</div>
+                {% if website_config.show_designer_credit %}
+                <div class="footer-bottom__credit">Designed by {{ website_config.designer_name|default:"Twiina Technologies" }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</footer>
