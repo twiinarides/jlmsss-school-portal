@@ -1,0 +1,73 @@
+{% extends 'school/base.html' %}
+{% load static admission_tags %}
+
+{% block title %}Submission Confirmed — {{ application.application_number }}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/admission.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admission-wrapper">
+  <div class="container py-5">
+    
+    <div class="adm-form-panel adm-confirmation">
+      <div class="adm-confirmation__icon">
+        <i class="fas fa-check"></i>
+      </div>
+      
+      <h2 style="font-weight:800;color:var(--adm-navy);">Application Received!</h2>
+      <p style="color:var(--adm-muted);">Your application form has been successfully transmitted to the admissions office.</p>
+      
+      <div class="adm-app-number-display">
+        {{ application.application_number }}
+      </div>
+      
+      <div style="font-size:.9rem;color:var(--adm-text);margin-bottom:2rem;">
+        Target Class: <strong>{{ application.get_entry_class_display }}</strong> &nbsp;·&nbsp;
+        Intake Window: <strong>{{ application.window.name }}</strong>
+      </div>
+      
+      <div class="adm-next-steps">
+        <h5 style="font-weight:700;color:var(--adm-navy);margin-bottom:1rem;"><i class="fas fa-clipboard-list me-2" style="color:var(--adm-gold);"></i>Next Steps & Guidelines</h5>
+        <ul class="list-unstyled mb-0">
+          <li>
+            <div class="step-num">1</div>
+            <div><strong>Keep Application Number:</strong> Use this number to track your application status.</div>
+          </li>
+          {% if application.window.application_fee and not application.payment_verified %}
+          <li>
+            <div class="step-num">2</div>
+            <div><strong>Payment Verification Pending:</strong> Your payment reference <code>{{ application.payment_reference }}</code> is being verified by our accounts desk.</div>
+          </li>
+          {% endif %}
+          {% if application.is_transfer %}
+          <li>
+            <div class="step-num">3</div>
+            <div><strong>Transfer School Verification:</strong> A verification link has been prepared for your previous school's administration to confirm your conduct and record.</div>
+          </li>
+          {% endif %}
+          <li>
+            <div class="step-num">{% if application.is_transfer %}4{% else %}3{% endif %}</div>
+            <div><strong>Admissions Review:</strong> If shortlisted, you will receive an invitation for an entry interview/assessment.</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <button type="button" class="adm-btn adm-btn-outline" data-print>
+          <i class="fas fa-print me-1"></i>Print Confirmation
+        </button>
+        <a href="{% url 'admission_dashboard' %}" class="adm-btn adm-btn-primary">
+          <i class="fas fa-th-large me-1"></i>Go to Dashboard
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/admission.js' %}"></script>
+{% endblock %}
