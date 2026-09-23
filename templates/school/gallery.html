@@ -1,0 +1,92 @@
+{% extends 'school/base.html' %}
+
+{% block title %}Gallery - {{ school_info.name }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <h2 class="section-title">Photo Gallery</h2>
+        
+        <!-- Category Filter -->
+        {% if categories %}
+        <div class="mb-4">
+            <a href="{% url 'gallery' %}" class="btn {% if not category_filter %}btn-primary{% else %}btn-outline-primary{% endif %} me-2 mb-2">
+                All
+            </a>
+            {% for cat in categories %}
+                <a href="?category={{ cat.slug }}" class="btn {% if category_filter == cat.slug %}btn-primary{% else %}btn-outline-primary{% endif %} me-2 mb-2">
+                    {{ cat.name }}
+                </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="row">
+            {% for photo in galleries %}
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="card">
+                    <a href="{{ photo.image.url }}" data-lightbox="gallery" data-title="{{ photo.title }}">
+                        <img src="{{ photo.image.url }}" class="card-img-top" alt="{{ photo.title }}" style="height: 250px; object-fit: cover;">
+                    </a>
+                    <div class="card-body">
+                        <h6 class="card-title">{{ photo.title }}</h6>
+                        {% if photo.description %}
+                            <p class="card-text small text-muted">{{ photo.description|truncatewords:15 }}</p>
+                        {% endif %}
+                        {% if photo.category %}
+                            <span class="badge bg-secondary">{{ photo.category.name }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>No photos in gallery yet.
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if galleries.has_other_pages %}
+        <nav aria-label="Gallery pagination">
+            <ul class="pagination justify-content-center">
+                {% if galleries.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ galleries.previous_page_number }}{% if category_filter %}&category={{ category_filter }}{% endif %}">Previous</a>
+                    </li>
+                {% endif %}
+                
+                {% for num in galleries.paginator.page_range %}
+                    {% if galleries.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% elif num > galleries.number|add:'-3' and num < galleries.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if category_filter %}&category={{ category_filter }}{% endif %}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if galleries.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ galleries.next_page_number }}{% if category_filter %}&category={{ category_filter }}{% endif %}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+{% endblock %}
+
