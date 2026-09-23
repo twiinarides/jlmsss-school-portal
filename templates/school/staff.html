@@ -1,0 +1,198 @@
+{% extends 'school/base.html' %}
+
+{% block title %}Staff - {{ school_info.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .staff-card {
+        border: 2px solid rgba(0,0,0,0.05);
+        border-radius: 16px;
+        transition: all 0.3s;
+        background: white;
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    .staff-card:hover {
+        border-color: var(--secondary-blue);
+        box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+        transform: translateY(-6px);
+    }
+    
+    .staff-photo-large {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid var(--light-gray);
+        margin: 0 auto 1.5rem;
+        display: block;
+    }
+    
+    .contact-info-box {
+        background: linear-gradient(135deg, var(--light-blue) 0%, var(--light-gray) 100%);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: white;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        transition: all 0.3s;
+        text-decoration: none;
+        color: var(--dark);
+    }
+    
+    .contact-item:hover {
+        background: var(--accent-green);
+        color: white;
+        transform: translateX(5px);
+    }
+    
+    .contact-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .contact-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--light-gray);
+        color: var(--primary-blue);
+        flex-shrink: 0;
+    }
+    
+    .contact-item:hover .contact-icon {
+        background: rgba(255,255,255,0.3);
+        color: white;
+    }
+    
+    .position-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .position-headteacher {
+        background: var(--primary-blue);
+        color: white;
+    }
+    
+    .position-deputy {
+        background: var(--secondary-blue);
+        color: white;
+    }
+    
+    .position-teacher {
+        background: rgba(31, 58, 138, 0.12);
+        color: var(--primary-blue);
+    }
+    
+    .position-administrator {
+        background: rgba(156, 107, 122, 0.16);
+        color: var(--secondary-blue);
+    }
+    
+    .position-support {
+        background: rgba(0,0,0,0.06);
+        color: var(--dark);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="mb-5">
+            <h2 class="section-title">Our Staff Directory</h2>
+            <p class="section-subtitle">Contact our dedicated team of educators and administrators. All contact information is publicly available for your convenience.</p>
+        </div>
+
+        <div class="row g-4">
+            {% for member in staff %}
+            <div class="col-md-6 col-lg-4">
+                <div class="staff-card card text-center p-4">
+                    {% if member.photo %}
+                        <img src="{{ member.photo.url }}" class="staff-photo-large" alt="{{ member.full_name }}">
+                    {% else %}
+                        <div class="staff-photo-large bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="font-size: 4rem;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <h4 class="mb-2" style="color: var(--primary-blue);">{{ member.full_name }}</h4>
+                    
+                    <span class="position-badge position-{{ member.position }}">
+                        {{ member.get_position_display }}
+                    </span>
+                    
+                    {% if member.department %}
+                        <p class="text-muted mb-3">
+                            <i class="fas fa-building me-1"></i>{{ member.department.name }}
+                        </p>
+                    {% endif %}
+                    
+                    {% if member.bio %}
+                        <p class="card-text small text-muted mb-3">{{ member.bio|truncatewords:25 }}</p>
+                    {% endif %}
+                    
+                    <div class="contact-info-box">
+                        {% if member.phone %}
+                            <a href="tel:{{ member.phone }}" class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <strong>Phone</strong>
+                                    <div>{{ member.phone }}</div>
+                                </div>
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        {% endif %}
+                        
+                        {% if member.email %}
+                            <a href="mailto:{{ member.email }}" class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <strong>Email</strong>
+                                    <div style="font-size: 0.85rem;">{{ member.email }}</div>
+                                </div>
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        {% endif %}
+                        
+                        {% if not member.phone and not member.email %}
+                            <div class="text-muted small text-center py-2">
+                                <i class="fas fa-info-circle me-1"></i>Contact information coming soon
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info text-center py-5">
+                    <i class="fas fa-info-circle fa-3x mb-3"></i>
+                    <h4>No staff members found</h4>
+                    <p class="mb-0">Please check back later or contact the school administration.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
