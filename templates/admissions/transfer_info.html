@@ -1,0 +1,1 @@
+{% extends 'admissions/base_admission.html' %}{% block content %}<h2>Transfer Info</h2><form method='post'>{% csrf_token %}{{ form.as_p }}<button class='btn adm-btn-primary'>Save & Continue</button></form>{% endblock %}
