@@ -1,0 +1,100 @@
+{% extends "registration/base.html" %}
+
+{% load i18n static jazzmin %}
+{% get_jazzmin_settings request as jazzmin_settings %}
+{% get_jazzmin_ui_tweaks as jazzmin_ui %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/admin-login.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script defer src="{% static 'js/admin-login.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="jlmss-login">
+        <div class="jlmss-login__left" aria-hidden="true">
+            <div class="jlmss-login__brand">
+                <img class="jlmss-login__badge" src="{% static 'img/school-badge.png' %}" alt="{{ jazzmin_settings.site_header }}">
+                <div class="jlmss-login__school">Janan Luwum Memorial Senior Secondary School</div>
+                <div class="jlmss-login__tag">Administrative Control Center</div>
+                <div class="jlmss-login__welcome">Welcome. Please sign in using your administrator account to manage content, staff, academics and system settings.</div>
+            </div>
+        </div>
+
+        <div class="jlmss-login__right">
+            <div class="jlmss-login__card" role="region" aria-label="Admin Login">
+                <div class="jlmss-login__cardhead">
+                    <div class="jlmss-login__title">
+                        <span class="jlmss-login__lock" aria-hidden="true"><i class="fas fa-lock"></i></span>
+                        <span>Admin Login</span>
+                    </div>
+                    <div class="jlmss-login__note">Authorized personnel only</div>
+                </div>
+
+                <form action="{{ app_path }}" method="post" class="jlmss-login__form" novalidate>
+                    {% csrf_token %}
+
+                    {% if user.is_authenticated %}
+                        <div class="jlmss-login__alert" role="alert">
+                            {% blocktrans trimmed %}
+                                You are authenticated as {{ username }}, but are not authorized to access this page. Would you like to login to a different account?
+                            {% endblocktrans %}
+                        </div>
+                    {% endif %}
+
+                    {% if form.errors %}
+                        <div class="jlmss-login__alert" role="alert">
+                            {% if form.non_field_errors %}
+                                {% for error in form.non_field_errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                            {% if form.username.errors %}
+                                <div>{{ form.username.label }}: {{ form.username.errors|join:', ' }}</div>
+                            {% endif %}
+                            {% if form.password.errors %}
+                                <div>{{ form.password.label }}: {{ form.password.errors|join:', ' }}</div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    <label class="jlmss-login__label" for="id_username">Username</label>
+                    <div class="jlmss-login__field">
+                        <input id="id_username" type="text" name="username" class="jlmss-login__input" autocomplete="username" required>
+                        <span class="jlmss-login__icon" aria-hidden="true"><i class="fas fa-user"></i></span>
+                    </div>
+
+                    <label class="jlmss-login__label" for="id_password">Password</label>
+                    <div class="jlmss-login__field">
+                        <input id="id_password" type="password" name="password" class="jlmss-login__input" autocomplete="current-password" required>
+                        <button type="button" class="jlmss-login__toggle" data-toggle-password aria-label="Toggle password visibility">
+                            <i class="fas fa-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <div class="jlmss-login__row">
+                        <label class="jlmss-login__remember">
+                            <input type="checkbox" data-remember-username>
+                            <span>Remember me</span>
+                        </label>
+                        {% url 'admin_password_reset' as password_reset_url %}
+                        {% if password_reset_url %}
+                            <a class="jlmss-login__link" href="{{ password_reset_url }}">Forgot password?</a>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="jlmss-login__btn">Log in</button>
+
+                    <div class="jlmss-login__secure">
+                        <span class="jlmss-login__secureicon" aria-hidden="true"><i class="fas fa-shield-alt"></i></span>
+                        <span>Secure access • CSRF protected</span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
