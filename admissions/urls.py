@@ -11,12 +11,16 @@ app_name = 'admissions'
 admissions_patterns = (
     [
         # Public & Auth
-
     path('', views.landing_view, name='landing'),
     path('register/', views.register_view, name='register'),
     path('verify/<str:token>/', views.verify_email_view, name='verify_email'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    # Password Reset
+    path('forgot-password/', views.forgot_password_view, name='forgot_password'),
+    path('reset-password/<str:token>/', views.reset_password_view, name='reset_password'),
+    # Resend Verification
+    path('resend-verification/', views.resend_verification_view, name='resend_verification'),
     
     # Parent / Guardian Dashboard & Profile
     path('dashboard/', views.dashboard_view, name='dashboard'),

@@ -1,1 +1,136 @@
-{% extends 'admissions/base_admission.html' %}{% block content %}<div class='card adm-card p-4 mx-auto' style='max-width: 500px;'><h2>Register</h2><form method='post'>{% csrf_token %}{{ form.as_p }}<button class='btn adm-btn-primary w-100'>Register</button></form></div>{% endblock %}
+{% extends 'admissions/base_admission.html' %}
+{% block title %}Create Account — JLMSSS Admissions{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
+
+    <div class="text-center mb-4 mt-2">
+      <img src="/static/img/school-badge.png" width="64" height="64"
+        style="border-radius:50%;border:3px solid #1a6b3a;box-shadow:0 4px 16px rgba(26,107,58,0.2);" onerror="this.style.display='none'">
+      <h2 class="mt-3 fw-bold" style="color:#1a6b3a;font-size:1.4rem;">Create Your Account</h2>
+      <p class="text-muted mb-0" style="font-size:0.84rem;">One account covers all your children's applications</p>
+    </div>
+
+    <div class="adm-card">
+      <div class="p-4">
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger" style="border-radius:9px;font-size:0.875rem;">{{ form.non_field_errors.0 }}</div>
+          {% endif %}
+
+          <div class="row g-3">
+            <div class="col-12 col-sm-6">
+              <div class="adm-form-group mb-0">
+                <label class="adm-label">First Name *</label>
+                <input type="text" name="first_name" class="adm-input" placeholder="First name"
+                  value="{{ form.first_name.value|default:'' }}" required autocomplete="given-name">
+                {% if form.first_name.errors %}<div class="text-danger mt-1" style="font-size:0.78rem;">{{ form.first_name.errors.0 }}</div>{% endif %}
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <div class="adm-form-group mb-0">
+                <label class="adm-label">Last Name *</label>
+                <input type="text" name="last_name" class="adm-input" placeholder="Last name"
+                  value="{{ form.last_name.value|default:'' }}" required autocomplete="family-name">
+                {% if form.last_name.errors %}<div class="text-danger mt-1" style="font-size:0.78rem;">{{ form.last_name.errors.0 }}</div>{% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="adm-form-group mt-3">
+            <label class="adm-label"><i class="fas fa-envelope me-1 text-jl-green"></i>Email Address *</label>
+            <input type="email" name="email" class="adm-input" placeholder="your@email.com"
+              value="{{ form.email.value|default:'' }}" required autocomplete="email">
+            {% if form.email.errors %}<div class="text-danger mt-1" style="font-size:0.78rem;">{{ form.email.errors.0 }}</div>{% endif %}
+            <div class="mt-1" style="font-size:0.78rem;color:#666;"><i class="fas fa-info-circle me-1"></i>A verification link will be sent here</div>
+          </div>
+
+          <div class="adm-form-group">
+            <label class="adm-label"><i class="fas fa-phone me-1 text-jl-green"></i>Phone Number *</label>
+            <input type="tel" name="phone" class="adm-input" placeholder="+256 700 000 000"
+              value="{{ form.phone.value|default:'' }}" required autocomplete="tel">
+            {% if form.phone.errors %}<div class="text-danger mt-1" style="font-size:0.78rem;">{{ form.phone.errors.0 }}</div>{% endif %}
+          </div>
+
+          <div class="row g-3">
+            <div class="col-12 col-sm-6">
+              <div class="adm-form-group mb-0">
+                <label class="adm-label"><i class="fas fa-lock me-1 text-jl-green"></i>Password *</label>
+                <div class="position-relative">
+                  <input type="password" name="password1" id="p1" class="adm-input" placeholder="Min 8 characters"
+                    required autocomplete="new-password" oninput="pwdStrength(this.value)" style="padding-right:2.8rem;">
+                  <button type="button" onclick="togglePwd('p1',this)"
+                    style="position:absolute;right:0.8rem;top:50%;transform:translateY(-50%);background:none;border:none;color:#888;cursor:pointer;padding:0;">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+                <div id="strength-bar" style="height:3px;background:#e9ecef;border-radius:2px;margin-top:5px;transition:all 0.3s;"></div>
+                {% if form.password1.errors %}<div class="text-danger mt-1" style="font-size:0.78rem;">{{ form.password1.errors.0 }}</div>{% endif %}
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <div class="adm-form-group mb-0">
+                <label class="adm-label">Confirm Password *</label>
+                <div class="position-relative">
+                  <input type="password" name="password2" id="p2" class="adm-input" placeholder="Repeat password"
+                    required autocomplete="new-password" style="padding-right:2.8rem;">
+                  <button type="button" onclick="togglePwd('p2',this)"
+                    style="position:absolute;right:0.8rem;top:50%;transform:translateY(-50%);background:none;border:none;color:#888;cursor:pointer;padding:0;">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+                {% if form.password2.errors %}<div class="text-danger mt-1" style="font-size:0.78rem;">{{ form.password2.errors.0 }}</div>{% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="adm-form-group mt-3">
+            <label class="d-flex align-items-start gap-2" style="cursor:pointer;">
+              <input type="checkbox" name="agree_terms" class="form-check-input mt-1 flex-shrink-0" required>
+              <span style="font-size:0.82rem;">I agree to the <a href="#" style="color:#1a6b3a;">Terms of Use</a> and <a href="#" style="color:#1a6b3a;">Privacy Policy</a> *</span>
+            </label>
+            {% if form.agree_terms.errors %}<div class="text-danger mt-1" style="font-size:0.78rem;">{{ form.agree_terms.errors.0 }}</div>{% endif %}
+          </div>
+
+          <button type="submit" class="btn btn-jl-green w-100" style="padding:0.7rem;font-size:0.95rem;">
+            <i class="fas fa-user-plus me-2"></i>Create Account
+          </button>
+        </form>
+
+        <hr class="my-3">
+        <p class="text-center mb-0" style="font-size:0.85rem;color:#555;">
+          Already have an account?
+          <a href="{% url 'admissions:login' %}" style="color:#1a6b3a;font-weight:600;">Sign In</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="text-center mt-3">
+      <a href="/" style="color:#1a6b3a;font-size:0.82rem;text-decoration:none;">
+        <i class="fas fa-arrow-left me-1"></i>Back to School Website
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function togglePwd(id, btn) {
+  const f = document.getElementById(id);
+  if (f.type === 'password') { f.type = 'text'; btn.innerHTML = '<i class="fas fa-eye-slash"></i>'; }
+  else { f.type = 'password'; btn.innerHTML = '<i class="fas fa-eye"></i>'; }
+}
+function pwdStrength(v) {
+  const bar = document.getElementById('strength-bar');
+  let s = 0;
+  if (v.length >= 8) s++;
+  if (/[A-Z]/.test(v)) s++;
+  if (/[0-9]/.test(v)) s++;
+  if (/[^A-Za-z0-9]/.test(v)) s++;
+  const c = ['#dc3545', '#fd7e14', '#ffc107', '#198754'];
+  bar.style.background = c[s - 1] || '#e9ecef';
+  bar.style.width = (s * 25) + '%';
+}
+</script>
+{% endblock %}

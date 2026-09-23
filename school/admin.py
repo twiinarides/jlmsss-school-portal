@@ -173,6 +173,26 @@ class AnnouncementAdmin(admin.ModelAdmin):
     def deactivate(self, request, queryset):
         queryset.update(is_active=False)
 
+    def save_model(self, request, obj, form, change):
+        """Broadcast email to all applicant accounts when a new announcement is published."""
+        is_new = obj.pk is None
+        super().save_model(request, obj, form, change)
+        if is_new and obj.is_active:
+            try:
+                from admissions.models import ApplicantAccount
+                from admissions.email_utils import send_announcement_email_to_all
+                emails = list(
+                    ApplicantAccount.objects.filter(
+                        email_verified=True, user__is_active=True
+                    ).values_list('user__email', flat=True)
+                )
+                if emails:
+                    ok, fail = send_announcement_email_to_all(obj, emails)
+                    self.message_user(request, f'Announcement published. Emails sent: {ok}, failed: {fail}.')
+            except Exception as e:
+                self.message_user(request, f'Announcement saved, but email broadcast error: {e}', level='warning')
+
+
 
 @admin.register(GalleryCategory)
 class GalleryCategoryAdmin(admin.ModelAdmin):

@@ -1,1 +1,171 @@
-{% extends 'admissions/base_admission.html' %}{% block content %}<h2>Parent Dashboard</h2><a href='{% url "admissions:add_student" %}' class='btn adm-btn-primary'>Add Student</a>{% endblock %}
+{% extends 'admissions/base_admission.html' %}
+{% block title %}My Dashboard — JLMSSS Admissions{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+{% block content %}
+
+<!-- Welcome Banner -->
+<div class="mb-4" style="background:linear-gradient(135deg,#1a6b3a,#1e7d44);border-radius:14px;padding:1.5rem 2rem;color:#fff;position:relative;overflow:hidden;">
+  <div style="position:absolute;top:-30px;right:-20px;width:120px;height:120px;background:rgba(255,255,255,0.05);border-radius:50%;"></div>
+  <div style="position:absolute;bottom:-40px;right:70px;width:90px;height:90px;background:rgba(212,175,55,0.12);border-radius:50%;"></div>
+  <h2 class="mb-1 fw-bold" style="font-size:clamp(1rem,4vw,1.4rem);">Hello, {{ account.user.first_name|default:account.user.username }}! 👋</h2>
+  <p class="mb-0" style="font-size:0.85rem;opacity:0.85;">Welcome to your JLMSSS Admissions Dashboard</p>
+</div>
+
+{% if not account.email_verified %}
+<div class="alert d-flex align-items-start gap-3 mb-4"
+  style="border-radius:10px;border:none;background:#fffbeb;border:1px solid #fde68a;">
+  <i class="fas fa-exclamation-triangle fa-lg mt-1" style="color:#d97706;flex-shrink:0;"></i>
+  <div class="flex-grow-1">
+    <strong style="color:#92400e;">Email Not Verified.</strong>
+    <span style="font-size:0.875rem;color:#78350f;"> Please verify your email to access all features.</span>
+  </div>
+  <form method="post" action="{% url 'admissions:resend_verification' %}" class="mb-0 flex-shrink-0">
+    {% csrf_token %}
+    <input type="hidden" name="email" value="{{ account.user.email }}">
+    <button type="submit" class="btn btn-sm btn-jl-gold" style="font-size:0.8rem;">Resend Email</button>
+  </form>
+</div>
+{% endif %}
+
+<div class="row g-4">
+  <!-- Left: Students -->
+  <div class="col-12 col-lg-7">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h5 class="section-title mb-0"><i class="fas fa-user-graduate me-2"></i>My Students</h5>
+      <a href="{% url 'admissions:add_student' %}" class="btn btn-jl-green btn-sm">
+        <i class="fas fa-plus me-1"></i>Add Student
+      </a>
+    </div>
+
+    {% if not students %}
+    <div class="adm-card p-4 text-center">
+      <div style="width:64px;height:64px;background:#f0f4f1;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+        <i class="fas fa-user-graduate fa-2x" style="color:#adb5bd;"></i>
+      </div>
+      <h6 class="text-muted">No student profiles yet</h6>
+      <p class="text-muted small mb-3">Add a student profile to start an application.</p>
+      <a href="{% url 'admissions:add_student' %}" class="btn btn-jl-green">
+        <i class="fas fa-plus me-2"></i>Add Student Profile
+      </a>
+    </div>
+    {% endif %}
+
+    {% for student in students %}
+    <div class="adm-card mb-3">
+      <div class="p-3">
+        <!-- Student header -->
+        <div class="d-flex align-items-center gap-3 mb-3">
+          {% if student.passport_photo %}
+            <img src="{{ student.passport_photo.url }}" width="48" height="48"
+              style="border-radius:50%;object-fit:cover;border:2px solid #1a6b3a;flex-shrink:0;">
+          {% else %}
+            <div style="width:48px;height:48px;border-radius:50%;background:#e8f5ee;display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a6b3a;font-size:1.1rem;flex-shrink:0;">
+              {{ student.first_name.0|upper }}{{ student.last_name.0|upper }}
+            </div>
+          {% endif %}
+          <div class="flex-grow-1 min-w-0">
+            <div class="fw-bold" style="font-size:0.95rem;">{{ student.full_name }}</div>
+            <div class="text-muted" style="font-size:0.78rem;">{{ student.get_gender_display|default:student.gender|title }} &bull; DOB: {{ student.date_of_birth|date:"d M Y"|default:"—" }}</div>
+          </div>
+          <a href="{% url 'admissions:edit_student' student.id %}" class="btn btn-sm btn-outline-secondary flex-shrink-0" style="border-radius:8px;">
+            <i class="fas fa-edit"></i>
+          </a>
+        </div>
+
+        <!-- This student's applications -->
+        {% for app in applications %}{% if app.student.id == student.id %}
+        <div class="d-flex align-items-center justify-content-between mb-2 p-2"
+          style="background:#f8f9fa;border-radius:8px;gap:0.5rem;flex-wrap:wrap;">
+          <div class="min-w-0">
+            <div class="small fw-bold" style="font-size:0.82rem;">{{ app.window.name|truncatechars:28 }}</div>
+            <div class="text-muted" style="font-size:0.72rem;">{{ app.entry_class_label }} &bull; #{{ app.application_number }}</div>
+          </div>
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <span class="status-badge badge-{{ app.status }}">{{ app.get_status_display }}</span>
+            <a href="{% url 'admissions:status_detail' app.application_number %}" class="btn btn-sm btn-jl-green" style="padding:0.2rem 0.6rem;font-size:0.75rem;">View</a>
+          </div>
+        </div>
+        {% endif %}{% endfor %}
+
+        <!-- Apply buttons for open windows -->
+        {% if open_windows %}
+        <div class="mt-2 pt-2" style="border-top:1px solid #f0f4f1;">
+          <div class="text-muted mb-2" style="font-size:0.78rem;"><i class="fas fa-door-open me-1"></i>Apply to an open window:</div>
+          <div class="d-flex flex-wrap gap-2">
+            {% for window in open_windows %}{% if window.is_open %}
+            <a href="{% url 'admissions:start_application' window.id student.id %}" class="btn btn-sm btn-jl-gold" style="font-size:0.78rem;">
+              <i class="fas fa-file-signature me-1"></i>{{ window.name|truncatechars:25 }}
+            </a>
+            {% endif %}{% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Right: Open Windows -->
+  <div class="col-12 col-lg-5">
+    <h5 class="section-title"><i class="fas fa-calendar-check me-2"></i>Open Admission Windows</h5>
+
+    {% if not open_windows %}
+    <div class="adm-card p-4 text-center">
+      <i class="fas fa-calendar-times fa-3x mb-3" style="color:#dee2e6;"></i>
+      <p class="text-muted mb-0">No admission windows are currently open. Check back later.</p>
+    </div>
+    {% endif %}
+
+    {% for window in open_windows %}{% if window.is_open %}
+    <div class="adm-card mb-3">
+      <div class="adm-card-header" style="justify-content:space-between;">
+        <span>{{ window.name }}</span>
+        <span class="badge" style="background:#d4af37;color:#1a1a1a;font-size:0.72rem;border-radius:20px;padding:0.25rem 0.7rem;">OPEN</span>
+      </div>
+      <div class="p-3">
+        <div class="row g-2 text-center mb-3">
+          <div class="col-6">
+            <div class="small text-muted">Closes</div>
+            <div class="fw-bold" style="font-size:0.85rem;">{{ window.closing_date|date:"d M Y" }}</div>
+          </div>
+          <div class="col-6">
+            <div class="small text-muted">Fee</div>
+            <div class="fw-bold" style="font-size:0.85rem;">
+              {% if window.application_fee %}UGX {{ window.application_fee|floatformat:0 }}{% else %}Free{% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="text-muted mb-1" style="font-size:0.78rem;">Available Classes:</div>
+          <div class="d-flex flex-wrap gap-1">
+            {% for ec in window.entry_classes.all %}{% if ec.is_open %}
+            <span class="badge" style="background:#e8f5ee;color:#1a6b3a;font-size:0.72rem;font-weight:600;border-radius:20px;padding:0.25rem 0.65rem;">{{ ec.get_entry_class_display }}</span>
+            {% endif %}{% endfor %}
+          </div>
+        </div>
+        {% if students %}
+        <div class="dropdown">
+          <button class="btn btn-jl-green w-100 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            <i class="fas fa-file-signature me-2"></i>Apply for a Student
+          </button>
+          <ul class="dropdown-menu w-100 shadow border-0" style="border-radius:10px;">
+            {% for student in students %}
+            <li>
+              <a class="dropdown-item" href="{% url 'admissions:start_application' window.id student.id %}">
+                <i class="fas fa-user-graduate me-2" style="color:#1a6b3a;"></i>{{ student.full_name }}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% else %}
+        <a href="{% url 'admissions:add_student' %}" class="btn btn-jl-green w-100">
+          <i class="fas fa-plus me-2"></i>Add Student to Apply
+        </a>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}{% endfor %}
+  </div>
+</div>
+{% endblock %}

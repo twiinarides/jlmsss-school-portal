@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>New Support Message</title></head>
+<body style="margin:0;padding:0;background:#f0f4f1;font-family:'Segoe UI',Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f4f1;padding:30px 10px;">
+  <tr><td align="center">
+    <table width="100%" style="max-width:560px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(26,107,58,0.10);">
+      <tr><td style="background:#0d6efd;padding:24px 40px;text-align:center;">
+        <div style="font-size:20px;font-weight:800;color:#fff;">💬 New Support Message</div>
+        <div style="color:rgba(255,255,255,0.8);font-size:12px;margin-top:4px;">JLMSSS Helpdesk — Admin Notification</div>
+      </td></tr>
+      <tr><td style="padding:32px 40px;">
+        <p style="color:#4a4a4a;font-size:14px;line-height:1.7;margin:0 0 16px;">
+          A visitor has sent a support message on the JLMSSS website.
+        </p>
+        <table width="100%" style="border-collapse:collapse;font-size:13px;margin-bottom:24px;">
+          <tr style="background:#f0f4f1;"><td style="padding:8px 12px;font-weight:600;color:#0d6efd;width:35%;">From</td><td style="padding:8px 12px;">{{ sender_name|default:"Anonymous" }}</td></tr>
+          {% if session %}<tr><td style="padding:8px 12px;font-weight:600;color:#0d6efd;">Session</td><td style="padding:8px 12px;">{{ session.session_key|truncatechars:20 }}</td></tr>{% endif %}
+        </table>
+        <div style="background:#f8f9fa;border-left:4px solid #0d6efd;padding:16px 18px;border-radius:8px;margin-bottom:24px;">
+          <div style="font-weight:600;color:#0d6efd;font-size:12px;margin-bottom:8px;">MESSAGE:</div>
+          <p style="color:#2d2d2d;font-size:14px;line-height:1.7;margin:0;">{{ message_text }}</p>
+        </div>
+        <div style="text-align:center;">
+          <a href="{{ admin_url }}" style="background:#0d6efd;color:#fff;padding:12px 30px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;display:inline-block;">
+            View in Admin Panel
+          </a>
+        </div>
+      </td></tr>
+      <tr><td style="background:#f8faf9;padding:18px 40px;text-align:center;border-top:1px solid #e8f0eb;">
+        <p style="color:#aaa;font-size:11px;margin:0;">Automated notification — JLMSSS Helpdesk System</p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>

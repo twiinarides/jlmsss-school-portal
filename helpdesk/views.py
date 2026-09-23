@@ -229,6 +229,12 @@ def send_message(request):
     if sender_type == 'visitor':
         if session.status != 'open':
             session.status = 'visitor_replied'
+        # Notify admin by email
+        try:
+            from admissions.email_utils import send_helpdesk_admin_notification
+            send_helpdesk_admin_notification(session, message_text, sender_name=sender_name)
+        except Exception:
+            pass
     else:
         session.status = 'admin_replied'
     session.save()  # triggers auto_now on last_activity_at

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Announcement</title></head>
+<body style="margin:0;padding:0;background:#f0f4f1;font-family:'Segoe UI',Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f4f1;padding:30px 10px;">
+  <tr><td align="center">
+    <table width="100%" style="max-width:580px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(26,107,58,0.10);">
+      <tr><td style="background:linear-gradient(135deg,#1a6b3a,#1e7d44);padding:28px 40px;text-align:center;">
+        <div style="font-size:11px;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;">School Announcement</div>
+        <div style="font-size:22px;font-weight:800;color:#fff;">{{ announcement.title }}</div>
+        <div style="color:#d4af37;font-size:12px;margin-top:6px;">JLMSSS — Kamuganguzi Janan Luwum Memorial SSS</div>
+      </td></tr>
+      <tr><td style="padding:36px 40px;">
+        <div style="color:#2d2d2d;font-size:14px;line-height:1.8;">{{ announcement.content|linebreaks }}</div>
+        {% if announcement.created_at %}
+        <div style="margin-top:20px;color:#888;font-size:12px;">Posted: {{ announcement.created_at|date:"d F Y" }}</div>
+        {% endif %}
+        <div style="text-align:center;margin-top:28px;">
+          <a href="{{ portal_url }}" style="background:#1a6b3a;color:#fff;padding:12px 30px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;display:inline-block;">
+            Visit Portal
+          </a>
+        </div>
+      </td></tr>
+      <tr><td style="background:#f8faf9;padding:18px 40px;text-align:center;border-top:1px solid #e8f0eb;">
+        <p style="color:#aaa;font-size:11px;margin:0;">{{ unsubscribe_note }}</p>
+        <p style="color:#aaa;font-size:11px;margin:4px 0 0;">© {% now "Y" %} JLMSSS</p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>

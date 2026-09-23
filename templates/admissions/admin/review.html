@@ -1,1 +1,301 @@
-{% extends 'admissions/base_admission.html' %}{% block content %}<h2>Review Application</h2><p>Status: {{ application.get_status_display }}</p>{% endblock %}
+{% extends 'admissions/base_admission.html' %}
+{% block title %}Review {{ application.application_number }} — JLMSSS Staff{% endblock %}
+{% block extra_css %}
+<style>
+  .doc-card { border:1.5px solid #d4e6da;border-radius:10px;padding:0.875rem;margin-bottom:0.75rem;transition:box-shadow 0.2s; }
+  .doc-card:hover { box-shadow:0 4px 14px rgba(26,107,58,0.1); }
+  .doc-thumb { width:76px;height:76px;object-fit:cover;border-radius:8px;cursor:pointer;border:1.5px solid #d4e6da; }
+  .action-panel { position:sticky;top:72px; }
+</style>
+{% endblock %}
+{% block content %}
+
+<!-- Header -->
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+  <div>
+    <a href="{% url 'admissions:staff_directory' %}" class="text-muted small text-decoration-none">
+      <i class="fas fa-arrow-left me-1"></i>All Applications
+    </a>
+    <h4 class="fw-bold mb-0" style="color:#1a6b3a;font-size:1.2rem;">{{ application.application_number }}</h4>
+    <p class="text-muted small mb-0">{{ application.student_name }} &bull; {{ application.entry_class_label }} &bull; {{ application.window.name }}</p>
+  </div>
+  <span class="status-badge badge-{{ application.status }}" style="font-size:0.82rem;padding:0.35rem 0.9rem;align-self:flex-start;">{{ application.get_status_display }}</span>
+</div>
+
+<div class="row g-4">
+  <!-- LEFT: Info + Docs -->
+  <div class="col-12 col-lg-7">
+
+    <!-- Applicant Info -->
+    <div class="adm-card mb-3">
+      <div class="adm-card-header"><i class="fas fa-user me-2"></i>Applicant & Student Information</div>
+      <div class="p-3">
+        <div class="row g-3">
+          {% if application.student %}
+          <div class="col-6 col-md-4"><div class="small text-muted">Student Name</div><div class="fw-bold small">{{ application.student.full_name }}</div></div>
+          <div class="col-6 col-md-4"><div class="small text-muted">Gender</div><div class="small">{{ application.student.get_gender_display|default:application.student.gender|title }}</div></div>
+          <div class="col-6 col-md-4"><div class="small text-muted">Date of Birth</div><div class="small">{{ application.student.date_of_birth|date:"d M Y" }}</div></div>
+          <div class="col-6 col-md-4"><div class="small text-muted">District</div><div class="small">{{ application.student.district_of_origin|default:"—" }}</div></div>
+          <div class="col-6 col-md-4"><div class="small text-muted">Previous School</div><div class="small">{{ application.student.previous_school_name|default:"—"|truncatechars:22 }}</div></div>
+          <div class="col-6 col-md-4"><div class="small text-muted">Blood Group</div><div class="small">{{ application.student.blood_group|default:"—" }}</div></div>
+          {% if application.student.has_special_needs %}
+          <div class="col-12"><div class="small text-muted">Special Needs</div><div class="small text-warning">{{ application.student.special_needs_details|default:"Yes" }}</div></div>
+          {% endif %}
+          <div class="col-12"><hr class="my-1"></div>
+          <div class="col-12"><div class="small text-muted">Guardian</div><div class="fw-bold small">{{ application.student.guardian_name }} ({{ application.student.guardian_relationship }})</div></div>
+          {% endif %}
+          <div class="col-6 col-md-4">
+            <div class="small text-muted">Guardian Phone</div>
+            <div class="small"><a href="tel:{{ application.applicant.phone }}" style="color:#1a6b3a;">{{ application.applicant.phone }}</a></div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="small text-muted">Account Email</div>
+            <div class="small"><a href="mailto:{{ application.applicant.user.email }}" style="color:#1a6b3a;">{{ application.applicant.user.email }}</a></div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="small text-muted">Payment Ref</div>
+            <div class="small">{{ application.payment_reference|default:"—" }}</div>
+          </div>
+          {% if application.payment_verified %}
+          <div class="col-6 col-md-4">
+            <div class="small text-muted">Payment</div>
+            <div class="small text-success fw-bold">✔ Verified</div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Documents -->
+    <div class="adm-card mb-3">
+      <div class="adm-card-header"><i class="fas fa-paperclip me-2"></i>Documents ({{ documents.count }})</div>
+      <div class="p-3">
+        {% if documents %}
+          {% for doc in documents %}
+          <div class="doc-card">
+            <div class="d-flex align-items-center gap-3">
+              {% if doc.is_image %}
+                <a href="{{ doc.file.url }}" target="_blank" rel="noopener">
+                  <img src="{{ doc.file.url }}" class="doc-thumb" alt="{{ doc.slot_name }}">
+                </a>
+              {% else %}
+                <a href="{{ doc.file.url }}" target="_blank" rel="noopener"
+                  style="width:76px;height:76px;background:#fff5f5;border-radius:8px;display:flex;align-items:center;justify-content:center;border:1.5px solid #f8d7da;flex-shrink:0;text-decoration:none;">
+                  <i class="fas fa-file-pdf fa-2x" style="color:#dc3545;"></i>
+                </a>
+              {% endif %}
+              <div class="flex-grow-1 min-w-0">
+                <div class="fw-bold small">{{ doc.slot_name }}</div>
+                <div class="text-muted" style="font-size:0.72rem;word-break:break-all;">{{ doc.original_name|truncatechars:36 }}</div>
+                <div class="text-muted" style="font-size:0.72rem;">{{ doc.file_size_kb }}KB &bull; {{ doc.uploaded_at|date:"d M Y H:i" }}</div>
+                <span class="status-badge badge-{{ doc.status }} mt-1 d-inline-block" style="font-size:0.68rem;">{{ doc.get_status_display }}</span>
+                {% if doc.admin_note %}
+                <div class="text-danger mt-1" style="font-size:0.75rem;"><i class="fas fa-flag me-1"></i>{{ doc.admin_note }}</div>
+                {% endif %}
+              </div>
+              <div class="d-flex flex-column gap-1 flex-shrink-0">
+                <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary" style="border-radius:7px;padding:0.2rem 0.5rem;font-size:0.72rem;" title="View">
+                  <i class="fas fa-eye"></i>
+                </a>
+                <button class="btn btn-sm btn-success approve-doc-btn" data-doc-id="{{ doc.id }}" style="border-radius:7px;padding:0.2rem 0.5rem;font-size:0.72rem;" title="Approve">
+                  <i class="fas fa-check"></i>
+                </button>
+                <button class="btn btn-sm btn-danger flag-doc-btn" data-doc-id="{{ doc.id }}" data-doc-name="{{ doc.slot_name }}" style="border-radius:7px;padding:0.2rem 0.5rem;font-size:0.72rem;" title="Flag">
+                  <i class="fas fa-flag"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="text-center text-muted py-3">
+            <i class="fas fa-info-circle me-2"></i>No documents uploaded yet.
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Previous Messages -->
+    {% if feedbacks %}
+    <div class="adm-card mb-3">
+      <div class="adm-card-header"><i class="fas fa-comments me-2"></i>Previous Messages Sent</div>
+      <div class="p-3">
+        {% for fb in feedbacks %}
+        <div class="p-2 mb-2 {% if not forloop.last %}mb-3{% endif %}" style="background:#f8f9fa;border-radius:8px;border-left:3px solid #1a6b3a;">
+          <div class="d-flex justify-content-between flex-wrap gap-1 mb-1">
+            <span class="small fw-bold">{{ fb.subject }}</span>
+            <span class="text-muted" style="font-size:0.7rem;">{{ fb.sent_at|date:"d M Y H:i" }}</span>
+          </div>
+          <p class="mb-0 small text-muted">{{ fb.message|truncatechars:120 }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- RIGHT: Actions -->
+  <div class="col-12 col-lg-5">
+    <div class="action-panel">
+
+      <!-- Change Status -->
+      <div class="adm-card mb-3">
+        <div class="adm-card-header"><i class="fas fa-exchange-alt me-2"></i>Change Application Status</div>
+        <div class="p-3">
+          <form method="post" action="{% url 'admissions:staff_change_status' application.application_number %}">
+            {% csrf_token %}
+            <div class="adm-form-group">
+              <label class="adm-label">New Status</label>
+              <select name="new_status" class="adm-select">
+                {% for val, label in status_form.new_status.field.choices %}
+                <option value="{{ val }}" {% if val == application.status %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="adm-form-group">
+              <label class="adm-label">Internal Note <span class="text-muted fw-normal">(not sent to applicant)</span></label>
+              <textarea name="note" class="adm-textarea" rows="2" placeholder="Optional note…"></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="d-flex align-items-center gap-2" style="cursor:pointer;">
+                <input type="checkbox" name="notify_applicant" checked class="form-check-input m-0">
+                <span class="small">Send email notification to applicant</span>
+              </label>
+            </div>
+            <button type="submit" class="btn btn-jl-green w-100">
+              <i class="fas fa-save me-2"></i>Update Status
+            </button>
+          </form>
+          <form method="post" action="{% url 'admissions:staff_generate_offer' application.application_number %}" class="mt-2">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-jl-gold w-100">
+              <i class="fas fa-file-pdf me-2"></i>Generate & Email Offer Letter
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Send Message -->
+      <div class="adm-card mb-3">
+        <div class="adm-card-header"><i class="fas fa-paper-plane me-2"></i>Send Message to Applicant</div>
+        <div class="p-3">
+          <form method="post" action="{% url 'admissions:staff_send_feedback' application.application_number %}">
+            {% csrf_token %}
+            <div class="adm-form-group">
+              <label class="adm-label">Message Type</label>
+              <select name="feedback_type" class="adm-select">
+                {% for val, label in feedback_form.feedback_type.field.choices %}
+                <option value="{{ val }}">{{ label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="adm-form-group">
+              <label class="adm-label">Subject</label>
+              <input type="text" name="subject" class="adm-input" placeholder="Subject line" required>
+            </div>
+            <div class="adm-form-group">
+              <label class="adm-label">Message</label>
+              <textarea name="message" class="adm-textarea" rows="4" placeholder="Write your message to the applicant…" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-jl-green w-100">
+              <i class="fas fa-paper-plane me-2"></i>Send Email
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Status History -->
+      <div class="adm-card">
+        <div class="adm-card-header"><i class="fas fa-history me-2"></i>Status History</div>
+        <div class="p-3">
+          {% for log in logs %}
+          <div class="d-flex gap-2 {% if not forloop.last %}mb-3 pb-2 border-bottom{% endif %}">
+            <div style="width:10px;height:10px;border-radius:50%;background:#1a6b3a;margin-top:5px;flex-shrink:0;"></div>
+            <div class="min-w-0">
+              <span class="status-badge badge-{{ log.to_status }}" style="font-size:0.68rem;">{{ log.to_status_display|default:log.to_status }}</span>
+              <div class="text-muted mt-1" style="font-size:0.7rem;">
+                {{ log.changed_at|date:"d M Y H:i" }}
+                {% if log.changed_by %}&bull; {{ log.changed_by.get_full_name|default:log.changed_by.username }}{% endif %}
+              </div>
+              {% if log.note %}<div class="text-muted" style="font-size:0.7rem;">{{ log.note }}</div>{% endif %}
+            </div>
+          </div>
+          {% empty %}
+          <p class="text-muted small text-center">No history yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Flag Document Modal -->
+<div class="modal fade" id="flagModal" tabindex="-1" aria-labelledby="flagModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content" style="border-radius:14px;">
+      <div class="modal-header" style="background:#1a6b3a;color:#fff;border-radius:14px 14px 0 0;">
+        <h5 class="modal-title" id="flagModalLabel"><i class="fas fa-flag me-2"></i>Flag Document</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted small mb-2" id="flag-doc-label"></p>
+        <label class="adm-label">Reason for Flagging <span class="text-muted fw-normal">(shown to applicant)</span></label>
+        <textarea id="flag-note" class="adm-textarea" rows="3" placeholder="Be specific about what is wrong with this document."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius:9px;">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmFlagBtn" style="border-radius:9px;">
+          <i class="fas fa-flag me-1"></i>Flag Document
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+const _csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+
+// Approve document
+document.querySelectorAll('.approve-doc-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    fetch(`/staff/doc/${btn.dataset.docId}/approve/`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': _csrf }
+    }).then(r => r.json()).then(() => {
+      btn.innerHTML = '<i class="fas fa-check"></i>';
+      btn.className = 'btn btn-sm btn-success';
+      setTimeout(() => location.reload(), 600);
+    }).catch(() => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i>'; });
+  });
+});
+
+// Flag document
+let _flagDocId = null;
+document.querySelectorAll('.flag-doc-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    _flagDocId = btn.dataset.docId;
+    document.getElementById('flag-doc-label').textContent = 'Document: ' + btn.dataset.docName;
+    document.getElementById('flag-note').value = '';
+    new bootstrap.Modal(document.getElementById('flagModal')).show();
+  });
+});
+
+document.getElementById('confirmFlagBtn').addEventListener('click', () => {
+  const note = document.getElementById('flag-note').value.trim();
+  if (!note) { alert('Please provide a reason for flagging.'); return; }
+  const fd = new FormData();
+  fd.append('note', note);
+  fetch(`/staff/doc/${_flagDocId}/flag/`, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': _csrf },
+    body: fd
+  }).then(r => r.json()).then(() => {
+    bootstrap.Modal.getInstance(document.getElementById('flagModal')).hide();
+    setTimeout(() => location.reload(), 400);
+  });
+});
+</script>
+{% endblock %}

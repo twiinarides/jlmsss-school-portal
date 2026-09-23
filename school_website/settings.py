@@ -248,14 +248,15 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'twiinarides@gmail.com'
-EMAIL_HOST_PASSWORD = 'fbrl gezu cinm qvya'
-DEFAULT_FROM_EMAIL = 'JLMSSS Admissions <twiinarides@gmail.com>'
-SERVER_EMAIL = 'twiinarides@gmail.com'
+EMAIL_HOST_USER = 'jananluwummemorialsss@gmail.com'
+EMAIL_HOST_PASSWORD = 'ypvw mluh blhj suit'
+DEFAULT_FROM_EMAIL = 'JLMSSS Admissions <jananluwummemorialsss@gmail.com>'
+SERVER_EMAIL = 'jananluwummemorialsss@gmail.com'
 
 # ============================================================
 # ADMISSION SUBDOMAIN
 # ============================================================
-ADMISSION_EMAIL_FROM = 'twiinarides@gmail.com'
+ADMISSION_EMAIL_FROM = 'JLMSSS Admissions <jananluwummemorialsss@gmail.com>'
+ADMIN_NOTIFICATION_EMAIL = 'jananluwummemorialsss@gmail.com'
 ADMISSION_SUBDOMAIN_HOST = 'admission.jananluwummemorialsss.sc.ug'
 ADMISSION_SUBDOMAIN = 'https://admission.jananluwummemorialsss.sc.ug'

@@ -1,51 +1,431 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>JLMSSS Admissions Portal</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root { --primary-blue: #0B1F3A; --secondary-blue: #D4AF37; }
-        body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; }
-        .adm-navbar { background-color: var(--primary-blue); }
-        .adm-navbar .navbar-brand, .adm-navbar .nav-link { color: #fff !important; }
-        .adm-card { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .adm-btn-primary { background-color: var(--primary-blue); border-color: var(--primary-blue); color: #fff; }
-        .adm-btn-primary:hover { background-color: #071529; border-color: #071529; color: #fff; }
-        .adm-btn-gold { background-color: var(--secondary-blue); border-color: var(--secondary-blue); color: var(--primary-blue); font-weight: 600; }
-    </style>
-    {% block extra_css %}{% endblock %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1a6b3a">
+  <meta name="description" content="JLMSSS Online Admissions Portal — Kamuganguzi Janan Luwum Memorial Senior Secondary School">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="JLMSSS Admissions">
+  <link rel="manifest" href="/static/manifest.json">
+  <link rel="apple-touch-icon" href="/static/img/school-badge.png">
+  <title>{% block title %}JLMSSS Admissions Portal{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --jl-green: #1a6b3a;
+      --jl-green-dark: #145530;
+      --jl-green-light: #e8f5ee;
+      --jl-gold: #d4af37;
+      --jl-gold-light: #fdf6d8;
+      --jl-border: #d4e6da;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f0f4f1;
+      min-height: 100vh;
+      color: #2d2d2d;
+      font-size: 0.9rem;
+    }
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f0f4f1; }
+    ::-webkit-scrollbar-thumb { background: #b5d5c0; border-radius: 3px; }
+
+    /* ── Navbar ── */
+    .adm-navbar {
+      background: var(--jl-green);
+      box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+      padding: 0.4rem 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 1040;
+    }
+    .adm-navbar .navbar-brand {
+      color: #fff !important;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+    .adm-navbar .navbar-brand img {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--jl-gold);
+    }
+    .adm-navbar .nav-link {
+      color: rgba(255,255,255,0.88) !important;
+      font-weight: 500;
+      font-size: 0.875rem;
+      padding: 0.45rem 0.75rem;
+      border-radius: 8px;
+      transition: all 0.18s;
+    }
+    .adm-navbar .nav-link:hover,
+    .adm-navbar .nav-link.active {
+      color: #fff !important;
+      background: rgba(255,255,255,0.15);
+    }
+    .adm-navbar .navbar-toggler {
+      border-color: rgba(255,255,255,0.35);
+      padding: 0.2rem 0.45rem;
+    }
+    .adm-navbar .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255,255,255,0.85%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+    .user-avatar {
+      width: 30px;
+      height: 30px;
+      background: var(--jl-gold);
+      color: var(--jl-green);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+    /* ── Cards ── */
+    .adm-card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 18px rgba(26,107,58,0.07);
+      border: 1px solid var(--jl-border);
+      overflow: hidden;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .adm-card-hover:hover {
+      box-shadow: 0 6px 28px rgba(26,107,58,0.14);
+      transform: translateY(-2px);
+    }
+    .adm-card-header {
+      background: linear-gradient(135deg, var(--jl-green) 0%, #1e7d44 100%);
+      color: #fff;
+      padding: 0.85rem 1.25rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    /* ── Buttons ── */
+    .btn-jl-green {
+      background: var(--jl-green);
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      font-weight: 600;
+      padding: 0.55rem 1.4rem;
+      font-size: 0.875rem;
+      transition: all 0.18s;
+      font-family: 'Poppins', sans-serif;
+    }
+    .btn-jl-green:hover, .btn-jl-green:focus {
+      background: var(--jl-green-dark);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(26,107,58,0.3);
+      transform: translateY(-1px);
+    }
+    .btn-jl-gold {
+      background: var(--jl-gold);
+      color: #1a1a1a;
+      border: none;
+      border-radius: 9px;
+      font-weight: 600;
+      padding: 0.55rem 1.4rem;
+      font-size: 0.875rem;
+      transition: all 0.18s;
+      font-family: 'Poppins', sans-serif;
+    }
+    .btn-jl-gold:hover, .btn-jl-gold:focus {
+      background: #b8961f;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(212,175,55,0.35);
+    }
+    /* ── Inputs ── */
+    .adm-input, .adm-select, .adm-textarea {
+      border: 2px solid var(--jl-border);
+      border-radius: 9px;
+      padding: 0.6rem 1rem;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      width: 100%;
+      transition: border-color 0.18s, box-shadow 0.18s;
+      background: #fff;
+      color: #2d2d2d;
+    }
+    .adm-input:focus, .adm-select:focus, .adm-textarea:focus {
+      outline: none;
+      border-color: var(--jl-green);
+      box-shadow: 0 0 0 3px rgba(26,107,58,0.12);
+    }
+    .adm-label {
+      font-weight: 600;
+      font-size: 0.82rem;
+      color: #2d4a38;
+      margin-bottom: 0.35rem;
+      display: block;
+    }
+    .adm-form-group { margin-bottom: 1.15rem; }
+    /* ── Status Badges ── */
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.7rem;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+    .badge-draft { background: #e9ecef; color: #495057; }
+    .badge-submitted { background: #cfe2ff; color: #0a58ca; }
+    .badge-under_doc_review { background: #ffe5d0; color: #842029; }
+    .badge-action_required { background: #f8d7da; color: #842029; }
+    .badge-docs_resubmitted { background: #e2d9f3; color: #432874; }
+    .badge-approved { background: #d1e7dd; color: #0a3622; }
+    .badge-provisionally_admitted { background: #d2f4ea; color: #0a3622; }
+    .badge-enrolled { background: #1a6b3a; color: #fff; }
+    .badge-rejected { background: #f8d7da; color: #842029; }
+    .badge-withdrawn { background: #e9ecef; color: #6c757d; }
+    .badge-pending { background: #ffe5d0; color: #7c4a00; }
+    .badge-flagged { background: #f8d7da; color: #842029; }
+    /* ── Section title ── */
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--jl-green);
+      border-left: 4px solid var(--jl-gold);
+      padding-left: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    /* ── Progress Steps ── */
+    .step-indicator {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      gap: 0;
+    }
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      min-width: 54px;
+      position: relative;
+    }
+    .step-item::after {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: calc(50% + 18px);
+      right: calc(-50% + 18px);
+      height: 2px;
+      background: #dee2e6;
+      z-index: 0;
+    }
+    .step-item:last-child::after { display: none; }
+    .step-item.done::after { background: var(--jl-green); }
+    .step-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #dee2e6;
+      color: #6c757d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      position: relative;
+      z-index: 1;
+      transition: all 0.3s;
+      flex-shrink: 0;
+    }
+    .step-item.active .step-icon { background: var(--jl-gold); color: #1a1a1a; box-shadow: 0 2px 8px rgba(212,175,55,0.4); }
+    .step-item.done .step-icon { background: var(--jl-green); color: #fff; }
+    .step-label {
+      font-size: 0.6rem;
+      margin-top: 0.35rem;
+      color: #6c757d;
+      text-align: center;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+    .step-item.active .step-label, .step-item.done .step-label { color: var(--jl-green); font-weight: 600; }
+    /* ── PWA Banner ── */
+    #pwa-install-banner {
+      display: none;
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      border: 2px solid var(--jl-green);
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      z-index: 9999;
+      max-width: 360px;
+      width: calc(100% - 2rem);
+      animation: slideUpBanner 0.3s ease;
+    }
+    @keyframes slideUpBanner {
+      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    /* ── Footer ── */
+    .adm-footer {
+      background: var(--jl-green);
+      color: rgba(255,255,255,0.75);
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.78rem;
+      margin-top: 3rem;
+    }
+    /* ── Misc ── */
+    .text-jl-green { color: var(--jl-green) !important; }
+    .bg-jl-green { background: var(--jl-green) !important; }
+    /* ── Responsive tweaks ── */
+    @media (max-width: 575px) {
+      main.adm-main { padding: 1rem 0.75rem; }
+      .adm-card { border-radius: 10px; }
+      .btn-jl-green, .btn-jl-gold { padding: 0.5rem 1rem; font-size: 0.84rem; }
+      .step-label { display: none; }
+    }
+  </style>
+  {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg adm-navbar mb-4">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'admissions:landing' %}">JLMSSS Admissions</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#admNav">
-                <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="admNav">
-                <ul class="navbar-nav ms-auto">
-                    {% if request.user.is_authenticated %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'admissions:dashboard' %}">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'admissions:logout' %}">Logout</a></li>
-                    {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'admissions:login' %}">Login</a></li>
-                        <li class="nav-item"><a class="nav-link btn adm-btn-gold ms-2 px-4" href="{% url 'admissions:register' %}">Apply Now</a></li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <div class="container mb-5">
-        {% if messages %}
-            {% for msg in messages %}
-                <div class="alert alert-{{ msg.tags }}">{{ msg }}</div>
-            {% endfor %}
-        {% endif %}
-        {% block content %}{% endblock %}
+
+<!-- ─── PWA Install Banner ─── -->
+<div id="pwa-install-banner">
+  <div class="d-flex align-items-center gap-3 mb-2">
+    <img src="/static/img/school-badge.png" width="48" height="48" style="border-radius:10px;object-fit:cover;flex-shrink:0;" onerror="this.style.display='none'">
+    <div>
+      <div style="font-weight:700;color:#1a6b3a;font-size:0.92rem;">Install JLMSSS Portal</div>
+      <div style="color:#666;font-size:0.78rem;">Add to your home screen for easy access</div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    {% block extra_js %}{% endblock %}
+  </div>
+  <div class="d-flex gap-2">
+    <button id="pwa-install-btn" class="btn btn-jl-green btn-sm flex-grow-1"><i class="fas fa-download me-1"></i>Install App</button>
+    <button id="pwa-dismiss-btn" class="btn btn-sm btn-outline-secondary" style="border-radius:9px;">Not now</button>
+  </div>
+</div>
+
+<!-- ─── Navbar ─── -->
+<nav class="adm-navbar navbar navbar-expand-lg">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'admissions:landing' %}">
+      <img src="/static/img/school-badge.png" alt="JLMSSS" onerror="this.style.display='none'">
+      <span>JLMSSS<span class="d-none d-sm-inline"> Admissions</span></span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#admNavbar" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="admNavbar">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1 py-2 py-lg-0">
+        {% if user.is_authenticated %}
+          {% if user.is_staff or user.is_superuser %}
+            <li class="nav-item"><a class="nav-link {% block nav_staff %}{% endblock %}" href="{% url 'admissions:staff_dashboard' %}"><i class="fas fa-tachometer-alt me-1"></i>Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'admissions:staff_directory' %}"><i class="fas fa-list me-1"></i>Applications</a></li>
+            <li class="nav-item"><a class="nav-link" href="/admin/"><i class="fas fa-cog me-1"></i>Admin Panel</a></li>
+          {% else %}
+            <li class="nav-item"><a class="nav-link {% block nav_dashboard %}{% endblock %}" href="{% url 'admissions:dashboard' %}"><i class="fas fa-home me-1"></i>Dashboard</a></li>
+          {% endif %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <span class="user-avatar">{{ user.first_name.0|upper }}{{ user.last_name.0|upper }}</span>
+              <span class="d-none d-lg-inline" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ user.get_full_name|truncatechars:18 }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius:12px;min-width:200px;">
+              <li><span class="dropdown-item-text text-muted" style="font-size:0.78rem;">{{ user.email }}</span></li>
+              <li><hr class="dropdown-divider my-1"></li>
+              <li><a class="dropdown-item" href="{% url 'admissions:logout' %}"><i class="fas fa-sign-out-alt me-2 text-danger"></i>Logout</a></li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'admissions:login' %}"><i class="fas fa-sign-in-alt me-1"></i>Login</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'admissions:register' %}" style="background:rgba(212,175,55,0.2);border-radius:8px;">
+              <i class="fas fa-user-plus me-1"></i>Register
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ─── Flash Messages ─── -->
+{% if messages %}
+<div style="max-width:1100px;margin:0 auto;padding:0.75rem 1rem 0;">
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show d-flex align-items-start gap-2" role="alert" style="border-radius:10px;border:none;font-size:0.875rem;padding:0.8rem 1rem;">
+    {% if 'success' in message.tags %}<i class="fas fa-check-circle text-success mt-1"></i>
+    {% elif 'error' in message.tags or 'danger' in message.tags %}<i class="fas fa-times-circle text-danger mt-1"></i>
+    {% elif 'warning' in message.tags %}<i class="fas fa-exclamation-triangle text-warning mt-1"></i>
+    {% else %}<i class="fas fa-info-circle text-info mt-1"></i>{% endif %}
+    <span class="flex-grow-1">{{ message }}</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- ─── Main ─── -->
+<main class="adm-main" style="max-width:1100px;margin:0 auto;padding:1.25rem 1rem;">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- ─── Footer ─── -->
+<footer class="adm-footer">
+  <p class="mb-0">&copy; {% now "Y" %} Kamuganguzi Janan Luwum Memorial Senior Secondary School &bull; Online Admissions Portal</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // ── PWA: Service Worker ──
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/static/js/sw.js').catch(function(){});
+  }
+  // ── PWA: Install Prompt ──
+  let _deferredPrompt;
+  const _banner = document.getElementById('pwa-install-banner');
+  const _installBtn = document.getElementById('pwa-install-btn');
+  const _dismissBtn = document.getElementById('pwa-dismiss-btn');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    _deferredPrompt = e;
+    if (!localStorage.getItem('pwa-dismissed')) {
+      setTimeout(() => { _banner.style.display = 'block'; }, 4000);
+    }
+  });
+  if (_installBtn) {
+    _installBtn.addEventListener('click', async () => {
+      _banner.style.display = 'none';
+      if (_deferredPrompt) { _deferredPrompt.prompt(); _deferredPrompt = null; }
+    });
+  }
+  if (_dismissBtn) {
+    _dismissBtn.addEventListener('click', () => {
+      _banner.style.display = 'none';
+      localStorage.setItem('pwa-dismissed', '1');
+    });
+  }
+  window.addEventListener('appinstalled', () => { _banner.style.display = 'none'; });
+</script>
+{% block extra_js %}{% endblock %}
 </body>
 </html>

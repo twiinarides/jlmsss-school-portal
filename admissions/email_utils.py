@@ -1,5 +1,6 @@
 """
 admissions/email_utils.py — Transactional email functions for JLMSSS Admission Portal
+All emails use Gmail SMTP. Headers configured to reduce spam classification.
 """
 
 from django.core.mail import EmailMultiAlternatives
@@ -10,24 +11,33 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-ADMISSION_EMAIL_FROM = getattr(settings, 'ADMISSION_EMAIL_FROM', 'admissions@jananluwummemorialsss.sc.ug')
+ADMISSION_EMAIL_FROM = getattr(settings, 'ADMISSION_EMAIL_FROM', 'JLMSSS Admissions <jananluwummemorialsss@gmail.com>')
 ADMISSION_SUBDOMAIN = getattr(settings, 'ADMISSION_SUBDOMAIN', 'https://admission.jananluwummemorialsss.sc.ug')
+ADMIN_NOTIFICATION_EMAIL = getattr(settings, 'ADMIN_NOTIFICATION_EMAIL', 'jananluwummemorialsss@gmail.com')
 
 
-def _send(subject, to_email, html_template, context, text_fallback=None, attachment=None):
+def _send(subject, to_email, html_template, context, text_fallback=None, attachment=None, extra_to=None):
     """Internal helper: send a single HTML email, log result."""
     try:
-        context['portal_url'] = ADMISSION_SUBDOMAIN
-        context['school_name'] = 'Kamuganguzi Janan Luwum Memorial Senior Secondary School'
+        context.setdefault('portal_url', ADMISSION_SUBDOMAIN)
+        context.setdefault('school_name', 'Kamuganguzi Janan Luwum Memorial Senior Secondary School')
+        context.setdefault('school_short', 'JLMSSS')
         html_body = render_to_string(html_template, context)
-        text_body = text_fallback or 'Please view this email in an HTML-capable client.'
+        text_body = text_fallback or 'Please view this email in an HTML-capable email client.'
+        recipients = [to_email]
+        if extra_to:
+            recipients += extra_to if isinstance(extra_to, list) else [extra_to]
         msg = EmailMultiAlternatives(
             subject=subject,
             body=text_body,
             from_email=ADMISSION_EMAIL_FROM,
-            to=[to_email],
+            to=recipients,
         )
         msg.attach_alternative(html_body, 'text/html')
+        msg.extra_headers = {
+            'X-Mailer': 'JLMSSS Portal Mailer 1.0',
+            'X-Auto-Response-Suppress': 'All',
+        }
         if attachment:
             filename, content, mimetype = attachment
             msg.attach(filename, content, mimetype)
@@ -45,12 +55,8 @@ def _log_notification(email, subject, body_preview, status, error=''):
     try:
         from .models import NotificationLog
         NotificationLog.objects.create(
-            recipient_email=email,
-            channel='email',
-            subject=subject,
-            body_preview=body_preview[:500],
-            status=status,
-            error_message=error,
+            recipient_email=email, channel='email', subject=subject,
+            body_preview=body_preview[:500], status=status, error_message=error,
         )
     except Exception:
         pass
@@ -64,11 +70,15 @@ def send_verification_email(user, token):
     """Send email address verification link to new registrant."""
     verify_url = f'{ADMISSION_SUBDOMAIN}/verify/{token.token}/'
     subject = 'Verify Your Email — JLMSSS Admissions Portal'
-    context = {
-        'user': user,
-        'verify_url': verify_url,
-        'expires_hours': 48,
-    }
+    context = {'user': user, 'verify_url': verify_url, 'expires_hours': 48, 'is_resend': False}
+    return _send(subject, user.email, 'admissions/emails/verification.html', context)
+
+
+def send_resend_verification_email(user, token):
+    """Resend verification email."""
+    verify_url = f'{ADMISSION_SUBDOMAIN}/verify/{token.token}/'
+    subject = 'New Verification Link — JLMSSS Admissions Portal'
+    context = {'user': user, 'verify_url': verify_url, 'expires_hours': 48, 'is_resend': True}
     return _send(subject, user.email, 'admissions/emails/verification.html', context)
 
 
@@ -92,7 +102,7 @@ def send_password_reset_email(user, token):
 # ============================================================================
 
 def send_submission_confirmation(application):
-    """Send confirmation that application was successfully submitted."""
+    """Send confirmation that application was successfully submitted, and notify admin."""
     subject = f'Application Received — {application.application_number}'
     status_url = f'{ADMISSION_SUBDOMAIN}/application/{application.application_number}/status/'
     context = {
@@ -101,24 +111,41 @@ def send_submission_confirmation(application):
         'status_url': status_url,
     }
     email = application.applicant.user.email
-    return _send(subject, email, 'admissions/emails/submission_confirmation.html', context)
+    ok = _send(subject, email, 'admissions/emails/submission_confirmation.html', context)
+    # Notify admin too
+    try:
+        send_new_application_admin_notification(application)
+    except Exception as e:
+        logger.error('Admin notification failed: %s', e)
+    return ok
+
+
+def send_new_application_admin_notification(application):
+    """Email the admissions office when a new application is submitted."""
+    subject = f'[JLMSSS] New Application Submitted — {application.application_number}'
+    review_url = f'{ADMISSION_SUBDOMAIN}/staff/app/{application.application_number}/'
+    context = {
+        'application': application,
+        'student_name': application.student_name,
+        'review_url': review_url,
+        'applicant_email': application.applicant.user.email,
+        'applicant_phone': application.applicant.phone,
+        'applicant_name': application.applicant.user.get_full_name(),
+    }
+    return _send(subject, ADMIN_NOTIFICATION_EMAIL, 'admissions/emails/admin_new_application.html', context)
 
 
 def send_status_change_email(application, old_status, new_status, note=''):
     """Send notification when application status changes."""
     status_url = f'{ADMISSION_SUBDOMAIN}/application/{application.application_number}/status/'
-    status_labels = dict([
-        ('draft', 'Draft'),
-        ('submitted', 'Submitted'),
-        ('under_doc_review', 'Under Document Review'),
-        ('action_required', 'Action Required — Resubmission Needed'),
-        ('docs_resubmitted', 'Documents Resubmitted'),
-        ('approved', 'Approved'),
-        ('provisionally_admitted', 'Provisionally Admitted'),
-        ('enrolled', 'Enrolled'),
-        ('rejected', 'Rejected'),
-        ('withdrawn', 'Withdrawn'),
-    ])
+    status_labels = {
+        'draft': 'Draft', 'submitted': 'Submitted',
+        'under_doc_review': 'Under Document Review',
+        'action_required': 'Action Required — Resubmission Needed',
+        'docs_resubmitted': 'Documents Resubmitted',
+        'approved': 'Approved', 'provisionally_admitted': 'Provisionally Admitted',
+        'enrolled': 'Enrolled', 'rejected': 'Rejected', 'withdrawn': 'Withdrawn',
+    }
     subject = f'Application Update: {status_labels.get(new_status, new_status)} — {application.application_number}'
     context = {
         'application': application,
@@ -135,7 +162,7 @@ def send_status_change_email(application, old_status, new_status, note=''):
 
 def send_action_required_email(application, feedback):
     """Notify parent that documents need correction."""
-    resubmit_url = f'{ADMISSION_SUBDOMAIN}/application/{application.application_number}/resubmit/'
+    resubmit_url = f'{ADMISSION_SUBDOMAIN}/application/{application.application_number}/upload/'
     subject = f'Action Required: Documents Need Attention — {application.application_number}'
     context = {
         'application': application,
@@ -152,7 +179,7 @@ def send_action_required_email(application, feedback):
 def send_offer_letter_email(application, pdf_bytes=None):
     """Send admission offer letter, optionally with PDF attachment."""
     accept_url = f'{ADMISSION_SUBDOMAIN}/application/{application.application_number}/accept-offer/'
-    subject = f'Admission Offer — {application.application_number} — Janan Luwum Memorial SSS'
+    subject = f'Congratulations! Admission Offer — {application.application_number} — JLMSSS'
     context = {
         'application': application,
         'student_name': application.student_name,
@@ -169,9 +196,14 @@ def send_offer_letter_email(application, pdf_bytes=None):
     return _send(subject, email, 'admissions/emails/offer_letter.html', context, attachment=attachment)
 
 
+def send_approval_email_with_pdf(application, pdf_bytes=None):
+    """Alias: send approval notification with PDF offer letter."""
+    return send_offer_letter_email(application, pdf_bytes)
+
+
 def send_rejection_email(application, reason=''):
     """Notify applicant of rejection."""
-    subject = f'Application Decision — {application.application_number}'
+    subject = f'Application Decision — {application.application_number} — JLMSSS'
     context = {
         'application': application,
         'student_name': application.student_name,
@@ -182,7 +214,7 @@ def send_rejection_email(application, reason=''):
 
 
 # ============================================================================
-# BULK EMAIL
+# BULK / ANNOUNCEMENT EMAILS
 # ============================================================================
 
 def send_bulk_email(applications_qs, subject, message_body, staff_user=None):
@@ -197,10 +229,42 @@ def send_bulk_email(applications_qs, subject, message_body, staff_user=None):
                 'status_url': f'{ADMISSION_SUBDOMAIN}/application/{app.application_number}/status/',
             }
             sent = _send(subject, app.applicant.user.email, 'admissions/emails/bulk_message.html', context)
-            if sent:
-                success += 1
-            else:
-                fail += 1
+            success += 1 if sent else 0
+            fail += 0 if sent else 1
         except Exception:
             fail += 1
     return success, fail
+
+
+def send_announcement_email_to_all(announcement, applicant_emails):
+    """Broadcast a school announcement to all registered applicant emails."""
+    subject = f'[JLMSSS Announcement] {announcement.title}'
+    success, fail = 0, 0
+    for email in applicant_emails:
+        try:
+            context = {
+                'announcement': announcement,
+                'unsubscribe_note': 'You are receiving this because you have an account on the JLMSSS Admissions Portal.',
+            }
+            sent = _send(subject, email, 'admissions/emails/announcement.html', context)
+            success += 1 if sent else 0
+            fail += 0 if sent else 1
+        except Exception:
+            fail += 1
+    return success, fail
+
+
+# ============================================================================
+# HELPDESK NOTIFICATION
+# ============================================================================
+
+def send_helpdesk_admin_notification(session, message_text, sender_name=''):
+    """Notify admin when a user sends a helpdesk message."""
+    subject = f'[JLMSSS Support] New message from {sender_name or "a visitor"}'
+    context = {
+        'session': session,
+        'message_text': message_text,
+        'sender_name': sender_name,
+        'admin_url': 'https://jananluwummemorialsss.sc.ug/admin/helpdesk/helpsession/',
+    }
+    return _send(subject, ADMIN_NOTIFICATION_EMAIL, 'admissions/emails/helpdesk_admin_notify.html', context)

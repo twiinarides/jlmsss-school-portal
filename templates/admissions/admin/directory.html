@@ -1,1 +1,117 @@
-{% extends 'admissions/base_admission.html' %}{% block content %}<h2>Applications Directory</h2><ul>{% for app in applications %}<li><a href='{% url "admissions:staff_review" app.application_number %}'>{{ app.application_number }}</a></li>{% endfor %}</ul>{% endblock %}
+{% extends 'admissions/base_admission.html' %}
+{% block title %}Applications Directory — JLMSSS{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+  <h4 class="fw-bold mb-0" style="color:#1a6b3a;font-size:1.2rem;">Applications Directory</h4>
+  <div class="d-flex gap-2 flex-wrap">
+    <a href="{% url 'admissions:staff_export_csv' %}?{{ request.GET.urlencode }}" class="btn btn-sm" style="background:#e8f5ee;color:#1a6b3a;border-radius:9px;font-weight:600;">
+      <i class="fas fa-file-csv me-1"></i>Export CSV
+    </a>
+    <a href="{% url 'admissions:staff_dashboard' %}" class="btn btn-sm btn-outline-secondary" style="border-radius:9px;">
+      <i class="fas fa-arrow-left me-1"></i>Dashboard
+    </a>
+  </div>
+</div>
+
+<!-- Filters -->
+<div class="adm-card mb-3">
+  <div class="p-3">
+    <form method="get">
+      <div class="row g-2">
+        <div class="col-12 col-sm-6 col-lg-2">
+          <input type="text" name="search" class="adm-input" placeholder="Search name, email…" value="{{ request.GET.search }}">
+        </div>
+        <div class="col-6 col-lg-2">
+          <select name="status" class="adm-select">
+            <option value="">All Statuses</option>
+            <option value="submitted" {% if request.GET.status == 'submitted' %}selected{% endif %}>Submitted</option>
+            <option value="under_doc_review" {% if request.GET.status == 'under_doc_review' %}selected{% endif %}>Under Review</option>
+            <option value="action_required" {% if request.GET.status == 'action_required' %}selected{% endif %}>Action Required</option>
+            <option value="docs_resubmitted" {% if request.GET.status == 'docs_resubmitted' %}selected{% endif %}>Resubmitted</option>
+            <option value="approved" {% if request.GET.status == 'approved' %}selected{% endif %}>Approved</option>
+            <option value="rejected" {% if request.GET.status == 'rejected' %}selected{% endif %}>Rejected</option>
+            <option value="enrolled" {% if request.GET.status == 'enrolled' %}selected{% endif %}>Enrolled</option>
+          </select>
+        </div>
+        <div class="col-6 col-lg-2">
+          <select name="entry_class" class="adm-select">
+            <option value="">All Classes</option>
+            <option value="s1" {% if request.GET.entry_class == 's1' %}selected{% endif %}>Senior 1</option>
+            <option value="s2" {% if request.GET.entry_class == 's2' %}selected{% endif %}>Senior 2</option>
+            <option value="s3" {% if request.GET.entry_class == 's3' %}selected{% endif %}>Senior 3</option>
+            <option value="s4" {% if request.GET.entry_class == 's4' %}selected{% endif %}>Senior 4</option>
+            <option value="s5" {% if request.GET.entry_class == 's5' %}selected{% endif %}>Senior 5</option>
+            <option value="s6" {% if request.GET.entry_class == 's6' %}selected{% endif %}>Senior 6</option>
+          </select>
+        </div>
+        <div class="col-6 col-sm-4 col-lg-2 d-flex gap-2">
+          <button type="submit" class="btn btn-jl-green flex-grow-1"><i class="fas fa-search"></i></button>
+          <a href="{% url 'admissions:staff_directory' %}" class="btn btn-outline-secondary" style="border-radius:9px;"><i class="fas fa-times"></i></a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Table -->
+<div class="adm-card">
+  {% if applications %}
+  <div class="table-responsive">
+    <table class="table table-hover mb-0" style="font-size:0.83rem;">
+      <thead style="background:#f0f4f1;position:sticky;top:64px;z-index:5;">
+        <tr>
+          <th class="ps-3" style="font-weight:700;color:#1a6b3a;">App #</th>
+          <th>Student</th>
+          <th class="d-none d-md-table-cell">Guardian</th>
+          <th class="d-none d-sm-table-cell">Class</th>
+          <th>Status</th>
+          <th class="d-none d-md-table-cell">Docs</th>
+          <th class="d-none d-lg-table-cell">Payment</th>
+          <th class="d-none d-md-table-cell">Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for app in applications %}
+      <tr style="cursor:pointer;" onclick="location.href='{% url 'admissions:staff_review' app.application_number %}'">
+        <td class="ps-3">
+          <div class="fw-bold" style="color:#1a6b3a;font-size:0.82rem;">{{ app.application_number }}</div>
+          <div class="text-muted" style="font-size:0.7rem;">{{ app.window.name|truncatechars:14 }}</div>
+        </td>
+        <td>
+          <div class="fw-bold">{{ app.student_name|truncatechars:20 }}</div>
+          <div class="text-muted" style="font-size:0.72rem;">{{ app.applicant.user.email|truncatechars:20 }}</div>
+        </td>
+        <td class="d-none d-md-table-cell">
+          <div>{{ app.applicant.user.get_full_name|truncatechars:18 }}</div>
+          <div class="text-muted" style="font-size:0.72rem;">{{ app.applicant.phone }}</div>
+        </td>
+        <td class="d-none d-sm-table-cell">
+          <span class="badge" style="background:#e8f5ee;color:#1a6b3a;font-size:0.72rem;border-radius:20px;">{{ app.entry_class_label }}</span>
+        </td>
+        <td><span class="status-badge badge-{{ app.status }}">{{ app.get_status_display }}</span></td>
+        <td class="d-none d-md-table-cell text-muted small">{{ app.documents.count }} file{{ app.documents.count|pluralize }}</td>
+        <td class="d-none d-lg-table-cell">
+          {% if app.payment_verified %}<span class="text-success small fw-bold">✔ Verified</span>
+          {% elif app.payment_reference %}<span class="text-warning small">⏳ Pending</span>
+          {% else %}<span class="text-muted small">—</span>{% endif %}
+        </td>
+        <td class="d-none d-md-table-cell text-muted small">{{ app.created_at|date:"d M Y" }}</td>
+        <td onclick="event.stopPropagation()">
+          <a href="{% url 'admissions:staff_review' app.application_number %}" class="btn btn-sm btn-jl-green" style="padding:0.2rem 0.6rem;font-size:0.75rem;white-space:nowrap;">Review</a>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="p-3 text-muted small border-top">{{ applications|length }} application{{ applications|length|pluralize }} found</div>
+  {% else %}
+  <div class="text-center text-muted py-5">
+    <i class="fas fa-search fa-2x mb-3 d-block" style="color:#dee2e6;"></i>
+    No applications found.
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

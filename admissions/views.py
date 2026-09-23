@@ -28,7 +28,8 @@ from .forms import (
 from .email_utils import (
     send_verification_email, send_welcome_email, send_status_change_email,
     send_action_required_email, send_offer_letter_email, send_password_reset_email,
-    send_submission_confirmation
+    send_submission_confirmation, send_approval_email_with_pdf, send_rejection_email,
+    send_resend_verification_email
 )
 from .pdf_utils import generate_offer_letter_pdf, generate_payment_receipt_pdf
 from .utils import log_audit, get_client_ip, export_applications_csv
@@ -637,7 +638,28 @@ def staff_change_status_view(request, app_number):
             ApplicationStatusLog.objects.create(application=app, from_status=old, to_status=new, changed_by=request.user, note=note)
             log_audit(request.user, f'Changed status to {new}', app, request=request)
             
-            if notify:
+            if new == 'approved':
+                # Auto-generate offer letter PDF and email it
+                try:
+                    from django.core.files.base import ContentFile
+                    pdf_bytes = generate_offer_letter_pdf(app)
+                    if pdf_bytes:
+                        fname = f'Offer_Letter_{app.application_number}.pdf'
+                        app.offer_letter.save(fname, ContentFile(pdf_bytes))
+                        app.offer_generated_at = timezone.now()
+                        app.save()
+                        send_approval_email_with_pdf(app, pdf_bytes)
+                        messages.success(request, 'Application APPROVED. Offer letter generated and emailed to applicant.')
+                    else:
+                        send_status_change_email(app, old, new, note)
+                        messages.warning(request, 'Approved, but PDF generation failed. A status email was sent instead.')
+                except Exception as e:
+                    send_status_change_email(app, old, new, note)
+                    messages.warning(request, f'Approved and status email sent. PDF error: {e}')
+            elif new == 'rejected':
+                send_rejection_email(app, note)
+                messages.success(request, 'Application rejected. Rejection email sent to applicant.')
+            elif notify:
                 send_status_change_email(app, old, new, note)
                 messages.success(request, f'Status updated to {new} and email sent.')
             else:
@@ -721,6 +743,80 @@ def staff_export_csv_view(request):
     return response
 
 # To prevent import errors in this codebase, adding imports required by urls and others directly here.
+
+# ============================================================================
+# PASSWORD RESET VIEWS
+# ============================================================================
+
+def forgot_password_view(request):
+    """Show form to request a password reset email."""
+    if request.method == 'POST':
+        form = ForgotPasswordForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email'].strip().lower()
+            try:
+                from django.contrib.auth.models import User as AuthUser
+                user = AuthUser.objects.get(email__iexact=email)
+                # Invalidate old tokens
+                PasswordResetToken.objects.filter(user=user, used=False).update(used=True)
+                token = PasswordResetToken.objects.create(user=user)
+                send_password_reset_email(user, token)
+            except Exception:
+                pass  # Don't reveal whether email exists
+            messages.success(request, 'If an account exists with that email, a password reset link has been sent. Please check your inbox and spam folder.')
+            return redirect('admissions:login')
+    else:
+        form = ForgotPasswordForm()
+    return render(request, 'admissions/forgot_password.html', {'form': form})
+
+
+def reset_password_view(request, token):
+    """Handle password reset via token link."""
+    try:
+        token_obj = PasswordResetToken.objects.get(token=token)
+        if not token_obj.is_valid:
+            messages.error(request, 'This password reset link has expired or already been used. Please request a new one.')
+            return redirect('admissions:forgot_password')
+    except PasswordResetToken.DoesNotExist:
+        messages.error(request, 'Invalid or expired reset link.')
+        return redirect('admissions:forgot_password')
+
+    if request.method == 'POST':
+        form = ResetPasswordForm(request.POST)
+        if form.is_valid():
+            token_obj.user.set_password(form.cleaned_data['password1'])
+            token_obj.user.save()
+            token_obj.used = True
+            token_obj.save()
+            messages.success(request, 'Password reset successfully! You can now log in with your new password.')
+            return redirect('admissions:login')
+    else:
+        form = ResetPasswordForm()
+    return render(request, 'admissions/reset_password.html', {'form': form, 'token': token})
+
+
+def resend_verification_view(request):
+    """Resend email verification link."""
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip().lower()
+        try:
+            from django.contrib.auth.models import User as AuthUser
+            user = AuthUser.objects.get(email__iexact=email)
+            account = getattr(user, 'applicant_profile', None)
+            if account and not account.email_verified:
+                EmailVerificationToken.objects.filter(user=user, used=False).update(used=True)
+                token = EmailVerificationToken.objects.create(user=user)
+                send_resend_verification_email(user, token)
+                messages.success(request, 'A new verification email has been sent. Please check your inbox and spam folder.')
+            elif account and account.email_verified:
+                messages.info(request, 'Your email is already verified. Please log in.')
+            else:
+                messages.success(request, 'If an account with that email exists, a new verification link has been sent.')
+        except Exception:
+            messages.success(request, 'If an account with that email exists, a new verification link has been sent.')
+    return redirect('admissions:login')
+
+
 STATUS_DISPLAY_PIPELINE = [
     ('draft', 'Draft', 'fas fa-pen'),
     ('submitted', 'Submitted', 'fas fa-paper-plane'),

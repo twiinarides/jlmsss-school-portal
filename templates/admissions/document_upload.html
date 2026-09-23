@@ -1,1 +1,216 @@
-{% extends 'admissions/base_admission.html' %}{% block content %}<h2>Document Upload</h2><p>Upload files here.</p><a href='{% url "admissions:transfer_info" application.application_number %}' class='btn adm-btn-primary'>Next</a>{% endblock %}
+{% extends 'admissions/base_admission.html' %}
+{% block title %}Upload Documents — {{ application.application_number }}{% endblock %}
+{% block extra_css %}
+<style>
+  .slot-card { border:2px solid #d4e6da;border-radius:12px;padding:1.1rem;margin-bottom:1rem;transition:border-color 0.2s,box-shadow 0.2s; }
+  .slot-card.has-doc { border-color:#1a6b3a; }
+  .slot-card.flagged { border-color:#dc3545;background:#fff5f5; }
+  .drop-zone { border:2px dashed #aac8b4;border-radius:10px;padding:2rem;text-align:center;cursor:pointer;transition:all 0.2s;background:#f8faf9; }
+  .drop-zone.dragover { border-color:#1a6b3a;background:#e8f5ee; }
+  .drop-zone:hover { border-color:#1a6b3a;background:#e8f5ee; }
+  .progress-bar-jl { background:#1a6b3a;height:6px;border-radius:3px;width:0%;transition:width 0.3s; }
+  .preview-thumb { width:60px;height:60px;object-fit:cover;border-radius:8px;border:1.5px solid #d4e6da; }
+</style>
+{% endblock %}
+{% block content %}
+
+<div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+  <div>
+    <a href="{% url 'admissions:status_detail' application.application_number %}" class="text-muted small text-decoration-none">
+      <i class="fas fa-arrow-left me-1"></i>Back to Application
+    </a>
+    <h4 class="fw-bold mb-0" style="color:#1a6b3a;font-size:1.2rem;">Upload Documents</h4>
+    <p class="text-muted small mb-0">{{ application.application_number }} — {{ application.student_name }}</p>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-12 col-lg-8">
+    <div class="adm-card mb-3">
+      <div class="adm-card-header"><i class="fas fa-info-circle me-2"></i>Instructions</div>
+      <div class="p-3 small text-muted">
+        Upload clear, legible copies of all required documents. Accepted formats: <strong>JPG, PNG, PDF</strong>. Max size: <strong>5MB per file</strong>.
+        Once uploaded, staff will review your documents. Flagged documents will need to be re-uploaded.
+      </div>
+    </div>
+
+    {% for slot in slots %}
+    {% with doc=slot.uploaded_doc %}
+    <div class="slot-card {% if doc %}has-doc{% endif %} {% if doc and doc.status == 'flagged' %}flagged{% endif %}" id="slot-{{ slot.id }}">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+        <div>
+          <div class="fw-bold" style="font-size:0.9rem;">
+            {{ slot.document_name }}
+            {% if slot.is_required %}<span class="text-danger ms-1">*</span>{% endif %}
+          </div>
+          {% if slot.description %}<div class="text-muted small">{{ slot.description }}</div>{% endif %}
+          {% if slot.accepted_formats %}<div class="text-muted" style="font-size:0.72rem;"><i class="fas fa-info-circle me-1"></i>Accepted: {{ slot.accepted_formats }}</div>{% endif %}
+        </div>
+        {% if doc %}
+        <span class="status-badge badge-{{ doc.status }}">{{ doc.get_status_display }}</span>
+        {% else %}
+        <span class="status-badge badge-pending">Not Uploaded</span>
+        {% endif %}
+      </div>
+
+      {% if doc and doc.status == 'flagged' %}
+      <div class="alert alert-danger py-2 px-3 mb-3" style="border-radius:8px;font-size:0.82rem;">
+        <i class="fas fa-flag me-1"></i><strong>Flagged:</strong> {{ doc.admin_note }}
+      </div>
+      {% endif %}
+
+      {% if doc %}
+      <!-- Uploaded file preview -->
+      <div class="d-flex align-items-center gap-3 mb-3 p-2" style="background:#f8f9fa;border-radius:9px;">
+        {% if doc.is_image %}
+          <a href="{{ doc.file.url }}" target="_blank" rel="noopener">
+            <img src="{{ doc.file.url }}" class="preview-thumb" alt="{{ slot.document_name }}">
+          </a>
+        {% else %}
+          <a href="{{ doc.file.url }}" target="_blank" rel="noopener"
+            style="width:60px;height:60px;background:#fff5f5;border-radius:8px;display:flex;align-items:center;justify-content:center;text-decoration:none;border:1.5px solid #f8d7da;flex-shrink:0;">
+            <i class="fas fa-file-pdf fa-xl" style="color:#dc3545;"></i>
+          </a>
+        {% endif %}
+        <div class="flex-grow-1 min-w-0">
+          <div class="small fw-bold">{{ doc.original_name|truncatechars:36 }}</div>
+          <div class="text-muted" style="font-size:0.72rem;">{{ doc.file_size_kb }}KB &bull; {{ doc.uploaded_at|date:"d M Y H:i" }}</div>
+        </div>
+        {% if doc.status == 'flagged' or doc.status == 'pending' %}
+        <form method="post" action="{% url 'admissions:delete_document_ajax' application.application_number doc.id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-danger" style="border-radius:8px;" title="Remove and re-upload">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </form>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- Upload zone (shown if no doc or flagged) -->
+      {% if not doc or doc.status == 'flagged' %}
+      <div class="drop-zone" id="dz-{{ slot.id }}" data-slot-key="{{ slot.slot_key }}" data-slot-id="{{ slot.id }}">
+        <i class="fas fa-cloud-upload-alt fa-2x mb-2" style="color:#aac8b4;"></i>
+        <div class="fw-bold small" style="color:#1a6b3a;">Drag & drop here, or click to browse</div>
+        <div class="text-muted" style="font-size:0.75rem;">JPG, PNG, PDF — max 5MB</div>
+        <input type="file" id="file-{{ slot.id }}" class="d-none" accept=".jpg,.jpeg,.png,.pdf" data-slot-id="{{ slot.id }}" data-slot-key="{{ slot.slot_key }}">
+      </div>
+      <div class="mt-2 d-none" id="progress-wrap-{{ slot.id }}">
+        <div style="background:#e9ecef;border-radius:3px;overflow:hidden;">
+          <div class="progress-bar-jl" id="pbar-{{ slot.id }}"></div>
+        </div>
+        <div class="text-muted mt-1" style="font-size:0.75rem;" id="pstatus-{{ slot.id }}">Uploading…</div>
+      </div>
+      {% endif %}
+    </div>
+    {% endwith %}
+    {% empty %}
+    <div class="adm-card p-4 text-center text-muted">
+      <i class="fas fa-folder-open fa-2x mb-3 d-block" style="color:#dee2e6;"></i>
+      No documents required for this application.
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Right: summary -->
+  <div class="col-12 col-lg-4">
+    <div class="adm-card" style="position:sticky;top:80px;">
+      <div class="adm-card-header"><i class="fas fa-tasks me-2"></i>Upload Progress</div>
+      <div class="p-3">
+        {% for slot in slots %}
+        {% with doc=slot.uploaded_doc %}
+        <div class="d-flex align-items-center gap-2 mb-2">
+          {% if doc %}
+            {% if doc.status == 'flagged' %}
+            <i class="fas fa-flag text-danger"></i>
+            {% elif doc.status == 'approved' %}
+            <i class="fas fa-check-circle text-success"></i>
+            {% else %}
+            <i class="fas fa-check-circle" style="color:#1a6b3a;"></i>
+            {% endif %}
+          {% else %}
+            <i class="fas fa-circle" style="color:#dee2e6;font-size:0.85rem;"></i>
+          {% endif %}
+          <span class="small">{{ slot.document_name }}{% if slot.is_required %} <span class="text-danger">*</span>{% endif %}</span>
+        </div>
+        {% endwith %}
+        {% endfor %}
+
+        <hr class="my-3">
+        <a href="{% url 'admissions:submit_application' application.application_number %}" class="btn btn-jl-green w-100">
+          <i class="fas fa-paper-plane me-2"></i>Submit Application
+        </a>
+        <a href="{% url 'admissions:status_detail' application.application_number %}" class="btn btn-outline-secondary w-100 mt-2" style="border-radius:9px;">
+          Save & Back
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+const CSRF = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+const APP_NUM = '{{ application.application_number }}';
+
+function initDropZone(slotId, slotKey) {
+  const zone = document.getElementById('dz-' + slotId);
+  const input = document.getElementById('file-' + slotId);
+  if (!zone || !input) return;
+
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    if (e.dataTransfer.files.length) uploadFile(e.dataTransfer.files[0], slotId, slotKey);
+  });
+  input.addEventListener('change', () => {
+    if (input.files.length) uploadFile(input.files[0], slotId, slotKey);
+  });
+}
+
+function uploadFile(file, slotId, slotKey) {
+  if (file.size > 5 * 1024 * 1024) {
+    alert('File is too large. Maximum size is 5MB.'); return;
+  }
+  const wrap = document.getElementById('progress-wrap-' + slotId);
+  const bar = document.getElementById('pbar-' + slotId);
+  const status = document.getElementById('pstatus-' + slotId);
+  wrap.classList.remove('d-none');
+  bar.style.width = '20%';
+  status.textContent = 'Uploading…';
+
+  const fd = new FormData();
+  fd.append('file', file);
+
+  fetch('/application/' + APP_NUM + '/upload/' + slotKey + '/', {
+    method: 'POST',
+    headers: { 'X-CSRFToken': CSRF },
+    body: fd
+  }).then(r => r.json()).then(data => {
+    if (data.success) {
+      bar.style.width = '100%';
+      status.textContent = '✔ Uploaded successfully!';
+      status.style.color = '#198754';
+      setTimeout(() => location.reload(), 800);
+    } else {
+      bar.style.width = '100%';
+      bar.style.background = '#dc3545';
+      status.textContent = data.error || 'Upload failed.';
+      status.style.color = '#dc3545';
+    }
+  }).catch(() => {
+    bar.style.background = '#dc3545';
+    status.textContent = 'Network error. Please try again.';
+    status.style.color = '#dc3545';
+  });
+}
+
+// Init all drop zones
+document.querySelectorAll('.drop-zone').forEach(zone => {
+  initDropZone(zone.dataset.slotId, zone.dataset.slotKey);
+});
+</script>
+{% endblock %}
