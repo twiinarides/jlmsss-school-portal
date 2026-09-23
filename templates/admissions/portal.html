@@ -24,9 +24,9 @@
           {# Language Switcher #}
           <div class="lang-switcher justify-content-lg-end mb-3">
             <span style="color:rgba(255,255,255,.6);font-size:.8rem;font-weight:600;">Language:</span>
-            <a href="/lang/en/" class="lang-btn{% if admission_lang == 'en' %} active{% endif %}" data-lang="en">English</a>
-            <a href="/lang/lg/" class="lang-btn{% if admission_lang == 'lg' %} active{% endif %}" data-lang="lg">Luganda</a>
-            <a href="/lang/rk/" class="lang-btn{% if admission_lang == 'rk' %} active{% endif %}" data-lang="rk">Runyakore</a>
+            <a href="/apply/lang/en/" class="lang-btn{% if admission_lang == 'en' %} active{% endif %}" data-lang="en">English</a>
+            <a href="/apply/lang/lg/" class="lang-btn{% if admission_lang == 'lg' %} active{% endif %}" data-lang="lg">Luganda</a>
+            <a href="/apply/lang/rk/" class="lang-btn{% if admission_lang == 'rk' %} active{% endif %}" data-lang="rk">Runyakore</a>
           </div>
           {# Auth Actions #}
           {% if request.user.is_authenticated and request.user.applicant_profile %}
