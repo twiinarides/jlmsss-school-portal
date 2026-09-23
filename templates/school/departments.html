@@ -1,0 +1,45 @@
+{% extends 'school/base.html' %}
+
+{% block title %}Departments - {{ school_info.name }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <h2 class="section-title">Our Departments</h2>
+        
+        <div class="row">
+            {% for department in departments %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            {% if department.icon %}
+                                <i class="{{ department.icon }} fa-3x text-primary me-3"></i>
+                            {% else %}
+                                <i class="fas fa-building fa-3x text-primary me-3"></i>
+                            {% endif %}
+                            <div>
+                                <h4 class="card-title mb-1">{{ department.name }}</h4>
+                                {% if department.head %}
+                                    <p class="text-muted mb-0">Head: {{ department.head }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-text">
+                            {{ department.description|safe }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>No departments available.
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
