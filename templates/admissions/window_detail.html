@@ -1,0 +1,220 @@
+{% extends 'school/base.html' %}
+{% load static admission_tags %}
+
+{% block title %}Apply — {{ window.name }}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/admission.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admission-wrapper">
+
+  {# Hero #}
+  <div class="adm-portal-hero" style="padding:2.5rem 0 2rem;">
+    <div class="container">
+      <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider:'›';">
+        <ol class="breadcrumb mb-2" style="background:none;padding:0;font-size:.82rem;">
+          <li class="breadcrumb-item"><a href="/apply/" style="color:rgba(255,255,255,.65);">Admissions</a></li>
+          <li class="breadcrumb-item active" style="color:rgba(255,255,255,.90);">{{ window.name }}</li>
+        </ol>
+      </nav>
+      <div class="row align-items-center g-3">
+        <div class="col-lg-8">
+          <div class="adm-badge-school"><i class="fas fa-window-maximize"></i>{{ window.get_term_display }} · {{ window.academic_year }}</div>
+          <h1>{{ window.name }}</h1>
+          {% if window.description %}<p class="mb-0">{{ window.description }}</p>{% endif %}
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <div class="lang-switcher justify-content-lg-end">
+            <a href="/apply/lang/en/" class="lang-btn{% if admission_lang == 'en' %} active{% endif %}" data-lang="en">English</a>
+            <a href="/apply/lang/lg/" class="lang-btn{% if admission_lang == 'lg' %} active{% endif %}" data-lang="lg">Luganda</a>
+            <a href="/apply/lang/rk/" class="lang-btn{% if admission_lang == 'rk' %} active{% endif %}" data-lang="rk">Runyakore</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container py-4">
+    <div class="row g-4">
+
+      {# ── LEFT: Window Info ── #}
+      <div class="col-lg-4">
+
+        {# Status card #}
+        <div class="card shadow-sm mb-4 border-0" style="border-radius:14px;overflow:hidden;">
+          <div style="background:var(--adm-navy);padding:1.25rem 1.5rem;">
+            <h5 style="color:white;font-size:.9rem;margin:0;font-weight:700;"><i class="fas fa-info-circle me-2" style="color:var(--adm-gold);"></i>Window Details</h5>
+          </div>
+          <div class="p-3">
+            <table class="table table-sm mb-0" style="font-size:.85rem;">
+              <tr>
+                <th style="color:var(--adm-muted);font-weight:600;border:none;padding:.5rem 0;">Opens</th>
+                <td style="border:none;padding:.5rem 0;">{{ window.opening_date|date:"d M Y" }}</td>
+              </tr>
+              <tr>
+                <th style="color:var(--adm-muted);font-weight:600;border:none;padding:.5rem 0;">Closes</th>
+                <td style="border:none;padding:.5rem 0;font-weight:700;color:var(--adm-danger);">{{ window.closing_date|date:"d M Y" }}</td>
+              </tr>
+              <tr>
+                <th style="color:var(--adm-muted);font-weight:600;border:none;padding:.5rem 0;">Fee</th>
+                <td style="border:none;padding:.5rem 0;">{% if window.application_fee %}UGX {{ window.application_fee|floatformat:"0" }}{% else %}No fee{% endif %}</td>
+              </tr>
+              <tr>
+                <th style="color:var(--adm-muted);font-weight:600;border:none;padding:.5rem 0;">Interview</th>
+                <td style="border:none;padding:.5rem 0;">{{ window.interview_required|yesno:"Required,Not required" }}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        {# Payment info if fee #}
+        {% if window.application_fee and payment_config %}
+        <div class="adm-payment-card mb-4">
+          <div class="adm-payment-card__header">
+            <i class="fas fa-mobile-alt" style="color:var(--adm-gold);"></i>
+            <h5>Payment Information</h5>
+          </div>
+          {% if payment_config.mtn_number %}
+          <div class="adm-payment-method">
+            <div class="adm-payment-method__label"><i class="fas fa-sim-card" style="color:#ffcc02;"></i>MTN Mobile Money</div>
+            <div class="adm-payment-method__number">{{ payment_config.mtn_number }}</div>
+            <div class="adm-payment-method__name">{{ payment_config.mtn_name }}</div>
+          </div>
+          {% endif %}
+          {% if payment_config.airtel_number %}
+          <div class="adm-payment-method">
+            <div class="adm-payment-method__label"><i class="fas fa-sim-card" style="color:#e40000;"></i>Airtel Money</div>
+            <div class="adm-payment-method__number">{{ payment_config.airtel_number }}</div>
+            <div class="adm-payment-method__name">{{ payment_config.airtel_name }}</div>
+          </div>
+          {% endif %}
+          {% if payment_config.bank_name %}
+          <div class="adm-payment-method">
+            <div class="adm-payment-method__label"><i class="fas fa-university"></i>Bank Transfer</div>
+            <div class="adm-payment-method__name">{{ payment_config.bank_name }} — A/C: {{ payment_config.bank_account }}</div>
+          </div>
+          {% endif %}
+          {% if payment_config.additional_instructions %}
+          <div class="p-3" style="font-size:.8rem;color:var(--adm-muted);border-top:1px solid var(--adm-border);">
+            {{ payment_config.additional_instructions }}
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        {# Eligibility #}
+        {% if window.eligibility_rules %}
+        <div class="card border-0 shadow-sm mb-4" style="border-radius:14px;overflow:hidden;">
+          <div style="background:var(--adm-off);border-bottom:1px solid var(--adm-border);padding:.85rem 1.25rem;">
+            <h6 style="font-size:.85rem;font-weight:700;color:var(--adm-navy);margin:0;"><i class="fas fa-clipboard-check me-2" style="color:var(--adm-gold);"></i>Eligibility Requirements</h6>
+          </div>
+          <div class="p-3" style="font-size:.85rem;">{{ window.eligibility_rules|linebreaks }}</div>
+        </div>
+        {% endif %}
+
+      </div>
+
+      {# ── RIGHT: Class Selector ── #}
+      <div class="col-lg-8">
+
+        {% if window.is_open %}
+        <div class="adm-form-panel">
+          <div class="adm-section-header">
+            <h3>{{ admission_trans|trans_key:"select_class" }}</h3>
+            <p>Choose the class you are applying to enter. The application form will be tailored to your selection.</p>
+          </div>
+          <div class="adm-section-body">
+
+            {% if not request.user.is_authenticated %}
+            <div class="alert alert-warning d-flex align-items-center gap-3 mb-4">
+              <i class="fas fa-lock fa-lg"></i>
+              <div>
+                <strong>Account required.</strong> You must <a href="{% url 'admission_login' %}?next={{ request.path }}" style="color:var(--adm-navy);">log in</a> or
+                <a href="{% url 'admission_register' %}?next={{ request.path }}" style="color:var(--adm-navy);">create an account</a> to apply.
+              </div>
+            </div>
+            {% endif %}
+
+            {# Class cards grid #}
+            <div class="row g-3 mb-4" id="class-cards">
+              {% for ec in entry_classes %}
+              <div class="col-sm-6 col-lg-4">
+                <div class="card border h-100 {% if not ec.is_open %}opacity-50{% endif %}"
+                     style="border-radius:12px;cursor:{% if ec.is_open %}pointer{% else %}not-allowed{% endif %};transition:all .2s;border-color:var(--adm-border)!important;"
+                     data-class-card
+                     data-class-code="{{ ec.entry_class }}"
+                     {% if not ec.is_open %}data-closed{% endif %}>
+                  <div class="card-body text-center p-3">
+                    <div style="width:52px;height:52px;border-radius:50%;background:var(--adm-gold-lt);border:2px solid var(--adm-gold);display:flex;align-items:center;justify-content:center;margin:0 auto .75rem;font-size:1.2rem;font-weight:800;color:var(--adm-navy);">
+                      {{ ec.entry_class|upper|slice:":2" }}
+                    </div>
+                    <h5 class="class-name mb-1" style="font-size:.95rem;font-weight:700;color:var(--adm-navy);">{{ ec.get_entry_class_display }}</h5>
+                    <small class="text-muted" style="font-size:.75rem;">{{ ec.get_intake_type_display }}</small>
+                    {% if ec.is_open %}
+                    {% if ec.spots_remaining is not None %}
+                    <div class="mt-2" style="font-size:.75rem;color:{% if ec.spots_remaining <= 5 %}var(--adm-danger){% else %}var(--adm-success){% endif %};font-weight:600;">
+                      {{ ec.spots_remaining }} spot{{ ec.spots_remaining|pluralize }} left
+                    </div>
+                    {% else %}
+                    <div class="mt-2" style="font-size:.75rem;color:var(--adm-success);font-weight:600;">Accepting applications</div>
+                    {% endif %}
+                    {% else %}
+                    <div class="mt-2 badge bg-secondary" style="font-size:.7rem;">Closed</div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+
+            {# Transfer toggle #}
+            <div class="d-flex align-items-center gap-3 p-3 mb-4" style="background:var(--adm-off);border-radius:12px;border:1px solid var(--adm-border);">
+              <div class="form-check form-switch mb-0">
+                <input class="form-check-input" type="checkbox" id="transfer-toggle" data-transfer-toggle style="width:2.5rem;height:1.25rem;">
+                <label class="form-check-label fw-bold" for="transfer-toggle" style="font-size:.9rem;color:var(--adm-navy);">
+                  {{ admission_trans|trans_key:"transfer_question" }}
+                </label>
+              </div>
+              <span style="font-size:.8rem;color:var(--adm-muted);">I am transferring from another school</span>
+            </div>
+
+            {# Apply button #}
+            {% if request.user.is_authenticated %}
+            <form method="post" action="{% url 'admission_start' window.id %}">
+              {% csrf_token %}
+              <input type="hidden" name="entry_class" id="adm-selected-class" value="">
+              <input type="hidden" name="is_transfer" id="adm-is-transfer" value="0">
+              <button type="submit" id="adm-start-btn" class="adm-btn adm-btn-gold adm-btn-lg w-100" disabled>
+                <i class="fas fa-arrow-right me-2"></i>{{ admission_trans|trans_key:"apply_now" }}
+              </button>
+            </form>
+            {% else %}
+            <a href="{% url 'admission_login' %}?next={{ request.path }}" class="adm-btn adm-btn-primary adm-btn-lg w-100">
+              <i class="fas fa-sign-in-alt me-2"></i>Login to Apply
+            </a>
+            {% endif %}
+
+          </div>
+        </div>
+        {% else %}
+        <div class="adm-empty">
+          <i class="fas fa-lock"></i>
+          <h4>This admission window is closed.</h4>
+          <p>Applications for {{ window.name }} are no longer being accepted. Please check other open windows or contact the school.</p>
+          <a href="{% url 'admission_portal' %}" class="adm-btn adm-btn-primary mt-3">
+            <i class="fas fa-arrow-left me-2"></i>View Other Windows
+          </a>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/admission.js' %}"></script>
+{% endblock %}
