@@ -1,0 +1,76 @@
+{% extends 'school/base.html' %}
+
+{% block title %}About Us - {{ school_info.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    {% if school_info %}
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-4 fw-bold mb-3" style="color: var(--primary-blue);">{{ school_info.name }}</h1>
+            {% if school_info.motto %}
+            <p class="lead text-muted fst-italic">"{{ school_info.motto }}"</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3" style="color: var(--primary-blue);">About Our School</h2>
+                    <div class="text-muted">
+                        {{ school_info.about|safe }}
+                    </div>
+                </div>
+            </div>
+            
+            {% if school_info.vision %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3" style="color: var(--primary-blue);">Our Vision</h2>
+                    <div class="text-muted">
+                        {{ school_info.vision|safe }}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if school_info.mission %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3" style="color: var(--primary-blue);">Our Mission</h2>
+                    <div class="text-muted">
+                        {{ school_info.mission|safe }}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3" style="color: var(--primary-blue);">Contact Information</h2>
+                    <p><i class="fas fa-map-marker-alt me-2"></i>{{ school_info.address }}</p>
+                    <p><i class="fas fa-phone me-2"></i>{{ school_info.phone }}</p>
+                    <p><i class="fas fa-envelope me-2"></i>{{ school_info.email }}</p>
+                    {% if school_info.website %}
+                    <p><i class="fas fa-globe me-2"></i><a href="{{ school_info.website }}" target="_blank">{{ school_info.website }}</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <p class="lead">School information is not available.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
