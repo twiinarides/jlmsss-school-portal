@@ -1,0 +1,159 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+{% load admin_dashboard %}
+
+{% block content_title %}
+  {% trans 'Dashboard' %}
+{% endblock %}
+
+{% block content %}
+  {% admin_kpis as kpis %}
+  {% admin_recent_activity 10 as activity %}
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="jlmss-glass jlmss-card-pad jlmss-section">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3">
+              <div style="width:56px;height:56px;border-radius:999px;background:#fff;display:flex;align-items:center;justify-content:center;">
+                <img src="{% static 'img/school-badge.png' %}" alt="Badge" style="width:44px;height:44px;object-fit:contain;" />
+              </div>
+              <div>
+                <div style="font-weight:950; letter-spacing:0.2px; font-size: 1.4rem; color: #0B1F3A;">JLMSSS Administrative Dashboard</div>
+                <div class="jlmss-muted" style="font-weight:700;">Administrators only • Manage content, staff, academics and system settings</div>
+              </div>
+            </div>
+            <div class="d-flex gap-2 flex-wrap jlmss-dashboard-actions">
+              <a class="btn btn-warning" href="{% url 'admin:school_news_add' %}"><i class="fas fa-plus me-2"></i>Add News</a>
+              <a class="btn btn-outline-primary" href="{% url 'admin:school_gallery_add' %}"><i class="fas fa-image me-2"></i>Add Gallery</a>
+              <a class="btn btn-outline-primary" href="{% url 'admin:school_event_add' %}"><i class="fas fa-calendar-plus me-2"></i>Add Event</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="row g-3 jlmss-section jlmss-kpi-grid">
+          <div class="col-6 col-lg-3">
+            <a class="jlmss-glass jlmss-card-pad jlmss-elevate d-block" style="height:100%; color: inherit; text-decoration: none;" href="{% url 'admin:school_staff_changelist' %}">
+              <div class="d-flex align-items-start justify-content-between">
+                <div>
+                  <div class="jlmss-muted" style="font-weight:800;">Total Staff</div>
+                  <div style="font-size: 2rem; font-weight: 950; color: #0B1F3A; line-height: 1.1;">{{ kpis.total_staff }}</div>
+                </div>
+                <div style="color:#D4AF37;font-size:1.25rem;"><i class="fas fa-chalkboard-teacher"></i></div>
+              </div>
+            </a>
+          </div>
+          <div class="col-6 col-lg-3">
+            <a class="jlmss-glass jlmss-card-pad jlmss-elevate d-block" style="height:100%; color: inherit; text-decoration: none;" href="{% url 'admin:school_news_changelist' %}">
+              <div class="d-flex align-items-start justify-content-between">
+                <div>
+                  <div class="jlmss-muted" style="font-weight:800;">News Posts</div>
+                  <div style="font-size: 2rem; font-weight: 950; color: #0B1F3A; line-height: 1.1;">{{ kpis.total_news }}</div>
+                </div>
+                <div style="color:#D4AF37;font-size:1.25rem;"><i class="fas fa-newspaper"></i></div>
+              </div>
+            </a>
+          </div>
+          <div class="col-6 col-lg-3">
+            <a class="jlmss-glass jlmss-card-pad jlmss-elevate d-block" style="height:100%; color: inherit; text-decoration: none;" href="{% url 'admin:school_event_changelist' %}">
+              <div class="d-flex align-items-start justify-content-between">
+                <div>
+                  <div class="jlmss-muted" style="font-weight:800;">Events</div>
+                  <div style="font-size: 2rem; font-weight: 950; color: #0B1F3A; line-height: 1.1;">{{ kpis.total_events }}</div>
+                </div>
+                <div style="color:#D4AF37;font-size:1.25rem;"><i class="fas fa-calendar-alt"></i></div>
+              </div>
+            </a>
+          </div>
+          <div class="col-6 col-lg-3">
+            <a class="jlmss-glass jlmss-card-pad jlmss-elevate d-block" style="height:100%; color: inherit; text-decoration: none;" href="{% url 'admin:school_contactmessage_changelist' %}">
+              <div class="d-flex align-items-start justify-content-between">
+                <div>
+                  <div class="jlmss-muted" style="font-weight:800;">Unread Messages</div>
+                  <div style="font-size: 2rem; font-weight: 950; color: #0B1F3A; line-height: 1.1;">{{ kpis.unread_messages }}</div>
+                </div>
+                <div style="color:#D4AF37;font-size:1.25rem;"><i class="fas fa-envelope"></i></div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-7">
+        <div class="jlmss-surface jlmss-section" style="overflow:hidden;">
+          <div class="jlmss-card-pad" style="padding-bottom: 12px;">
+            <div style="font-weight:900; color:#0B1F3A;">Recent Activity</div>
+            <div class="jlmss-muted" style="font-weight:700;">Latest admin actions and content updates</div>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Item</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for e in activity %}
+                    <tr>
+                      <td style="white-space:nowrap;">{{ e.action_time|date:"Y-m-d H:i" }}</td>
+                      <td>{{ e.user }}</td>
+                      <td>{{ e.model }}</td>
+                      <td>{{ e.object_repr }}</td>
+                    </tr>
+                  {% empty %}
+                    <tr><td colspan="4" class="text-muted p-3">No recent activity.</td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-5">
+        <div class="jlmss-surface jlmss-card-pad jlmss-section">
+          <div style="font-weight:900; color:#0B1F3A; margin-bottom: 12px;">Quick Navigation</div>
+          <div class="row g-2 jlmss-quicknav-grid">
+            <div class="col-12 col-md-6">
+              <a class="d-flex align-items-center gap-2 jlmss-glass jlmss-card-pad jlmss-elevate" style="padding: 14px; color: inherit; text-decoration: none;" href="{% url 'admin:school_staff_changelist' %}">
+                <span style="color:#D4AF37;"><i class="fas fa-chalkboard-teacher"></i></span>
+                <span style="font-weight:800;">Staff</span>
+              </a>
+            </div>
+            <div class="col-12 col-md-6">
+              <a class="d-flex align-items-center gap-2 jlmss-glass jlmss-card-pad jlmss-elevate" style="padding: 14px; color: inherit; text-decoration: none;" href="{% url 'admin:school_news_changelist' %}">
+                <span style="color:#D4AF37;"><i class="fas fa-newspaper"></i></span>
+                <span style="font-weight:800;">News</span>
+              </a>
+            </div>
+            <div class="col-12 col-md-6">
+              <a class="d-flex align-items-center gap-2 jlmss-glass jlmss-card-pad jlmss-elevate" style="padding: 14px; color: inherit; text-decoration: none;" href="{% url 'admin:school_gallery_changelist' %}">
+                <span style="color:#D4AF37;"><i class="fas fa-images"></i></span>
+                <span style="font-weight:800;">Gallery</span>
+              </a>
+            </div>
+            <div class="col-12 col-md-6">
+              <a class="d-flex align-items-center gap-2 jlmss-glass jlmss-card-pad jlmss-elevate" style="padding: 14px; color: inherit; text-decoration: none;" href="{% url 'admin:school_event_changelist' %}">
+                <span style="color:#D4AF37;"><i class="fas fa-calendar-alt"></i></span>
+                <span style="font-weight:800;">Events</span>
+              </a>
+            </div>
+            <div class="col-12">
+              <a class="d-flex align-items-center gap-2 jlmss-glass jlmss-card-pad jlmss-elevate" style="padding: 14px; color: inherit; text-decoration: none;" href="{% url 'admin:school_websiteconfig_changelist' %}">
+                <span style="color:#D4AF37;"><i class="fas fa-sliders-h"></i></span>
+                <span style="font-weight:800;">Website Settings</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
