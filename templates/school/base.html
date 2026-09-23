@@ -1,0 +1,485 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Janan Luwum Memorial SSS">
+<meta property="og:title" content="{% block og_title %}{% if school_info %}{{ school_info.name }}{% else %}Janan Luwum Memorial SSS{% endif %}{% endblock %}">
+<meta property="og:description" content="{% block og_description %}Official website of Janan Luwum Memorial Senior Secondary School.{% endblock %}">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/school-badge.png' %}{% endblock %}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{% block twitter_title %}{% if school_info %}{{ school_info.name }}{% else %}Janan Luwum Memorial SSS{% endif %}{% endblock %}">
+<meta name="twitter:description" content="{% block twitter_description %}Official website of Janan Luwum Memorial Senior Secondary School.{% endblock %}">
+<meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/school-badge.png' %}{% endblock %}">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% if school_info %}{{ school_info.name }}{% else %}School Website{% endif %}{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+ 
+    <link rel="icon" type="image/png" href="{% static 'img/school-badge.png' %}">
+    <link rel="apple-touch-icon" type="image/png" href="{% static 'img/school-badge.png' %}">
+    <link rel="stylesheet" href="{% static 'css/site.css' %}">
+    
+    <style>
+        :root {
+            --primary-blue: #0B1F3A;
+            --secondary-blue: #D4AF37;
+            --light-blue: #F5F5F5;
+            --white: #FFFFFF;
+            --dark: #111111;
+            --accent-green: #D4AF37;
+            --accent-orange: #D4AF37;
+            --accent-purple: #D4AF37;
+            --warm-gray: #1A1A1A;
+            --light-gray: #FFFFFF;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark);
+            line-height: 1.6;
+            background: var(--light-gray);
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: var(--primary-blue);
+            color: var(--white);
+            padding: 5rem 0;
+            position: relative;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(156, 107, 122, 0.14) 0%, transparent 55%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 55%);
+            opacity: 0.6;
+        }
+        
+        /* Card Styles */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            overflow: hidden;
+            background: var(--white);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .card:hover .card-img-top {
+            transform: scale(1.1);
+        }
+        
+        /* Section Styles */
+        .section-title {
+            color: var(--primary-blue);
+            font-weight: 700;
+            margin-bottom: 2.5rem;
+            position: relative;
+            display: inline-block;
+            font-size: 2rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary-blue), var(--primary-blue));
+            border-radius: 2px;
+        }
+        
+        .section-subtitle {
+            color: var(--warm-gray);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        
+        /* Button Styles */
+        .btn-primary {
+            background: var(--primary-blue);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(31, 58, 138, 0.25);
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-blue);
+            color: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(156, 107, 122, 0.35);
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        a {
+            color: var(--primary-blue);
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--secondary-blue);
+        }
+
+        a:focus-visible,
+        .btn:focus-visible,
+        .form-control:focus-visible,
+        .form-select:focus-visible {
+            outline: 3px solid rgba(156, 107, 122, 0.35);
+            outline-offset: 2px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.2rem rgba(31, 58, 138, 0.18);
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--primary-blue);
+            color: var(--white);
+            padding: 3rem 0 1rem;
+            margin-top: 4rem;
+            border-top: 4px solid var(--secondary-blue);
+        }
+        
+        /* Staff Card Styles */
+        .staff-card {
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 12px;
+            transition: all 0.3s;
+            background: var(--white);
+        }
+        
+        .staff-card:hover {
+            border-color: var(--secondary-blue);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            transform: translateY(-4px);
+        }
+        
+        /* Video Message Card */
+        .video-message-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .video-message-card:hover {
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            transform: translateY(-4px);
+        }
+        
+        /* Color Accents */
+        .bg-accent-green {
+            background-color: var(--accent-green) !important;
+        }
+        
+        .text-accent-green {
+            color: var(--accent-green) !important;
+        }
+        
+        .bg-accent-orange {
+            background-color: var(--accent-orange) !important;
+        }
+        
+        .bg-light-section {
+            background-color: var(--light-gray);
+        }
+        
+        .footer a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer a:hover {
+            color: var(--secondary-blue);
+        }
+        
+        /* Announcement Banner */
+        .announcement-banner {
+            background: var(--light-blue);
+            padding: 1rem;
+            border-left: 4px solid var(--secondary-blue);
+            margin-bottom: 2rem;
+        }
+        
+        .announcement-banner.high {
+            background: rgba(156, 107, 122, 0.14);
+            border-left-color: var(--secondary-blue);
+        }
+        
+        /* Badge Styles */
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .staff-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .hero-section {
+                padding: 3rem 0;
+            }
+            
+            .display-4 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.75rem;
+            }
+            
+            .stats-section {
+                margin-top: -2rem;
+                padding: 1.5rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 2rem 0;
+            }
+            
+            .display-4 {
+                font-size: 1.75rem;
+            }
+            
+            .lead {
+                font-size: 1rem;
+            }
+            
+            .btn-lg {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .stats-section {
+                margin-top: -1.5rem;
+                padding: 1rem;
+            }
+            
+            .stat-item {
+                padding: 0.75rem;
+            }
+            
+            .stat-number {
+                font-size: 1.75rem;
+            }
+            
+            .stat-label {
+                font-size: 0.8rem;
+            }
+            
+            .staff-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+            
+            .staff-item {
+                padding: 1rem;
+            }
+            
+            .staff-photo {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .navbar-brand img {
+                max-width: 150px;
+                height: auto;
+            }
+            
+            .school-profile-card {
+                padding: 1.5rem;
+            }
+            
+            .video-wrapper {
+                margin-bottom: 1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-section {
+                padding: 1.5rem 0;
+            }
+            
+            .display-4 {
+                font-size: 1.5rem;
+            }
+            
+            .stats-section {
+                margin-top: -1rem;
+                padding: 0.75rem;
+            }
+            
+            .stat-number {
+                font-size: 1.5rem;
+            }
+            
+            .staff-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-badge {
+                font-size: 0.85rem;
+                padding: 0.4rem 0.8rem;
+            }
+            
+            .navbar-nav {
+                text-align: center;
+            }
+            
+            .navbar-nav .nav-link {
+                padding: 0.5rem 0;
+            }
+            
+            .btn-login {
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header class="site-header">
+        {% include 'partials/navbar.html' %}
+    </header>
+
+    {% if priority_announcement %}
+        <div
+            id="priorityAnnouncement"
+            class="priority-announcement-overlay"
+            data-announcement-id="{{ priority_announcement.id }}"
+        >
+            <div class="priority-announcement-popup" role="dialog" aria-modal="true" aria-label="Priority announcement">
+                <button type="button" class="priority-announcement-close" data-priority-announcement-close aria-label="Close">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+                <div class="priority-announcement-title">
+                    <i class="fas fa-bullhorn me-2" aria-hidden="true"></i>{{ priority_announcement.title }}
+                </div>
+                <div class="priority-announcement-body">{{ priority_announcement.content|safe|truncatewords:45 }}</div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% block hero %}
+    <section class="page-hero">
+        <div class="container">
+            <div class="page-hero__inner text-center">
+                <h1 class="page-hero__title">{% if page_hero_title %}{{ page_hero_title }}{% elif school_info %}{{ school_info.name }}{% else %}School Website{% endif %}</h1>
+                {% if page_hero_intro %}
+                <p class="page-hero__intro">{{ page_hero_intro }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    {% endblock %}
+
+    <!-- Main Content -->
+    {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    {% include 'partials/footer.html' %}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/site-nav.js' %}"></script>
+    
+    <!-- Helpdesk Live Chat Widget -->
+    {% include 'helpdesk/widget.html' %}
+
+    {% block extra_js %}{% endblock %}
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
+
