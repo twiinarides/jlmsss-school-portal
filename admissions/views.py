@@ -830,3 +830,28 @@ STATUS_DISPLAY_PIPELINE = [
     ('provisionally_admitted', 'Provisionally Admitted', 'fas fa-graduation-cap'),
     ('enrolled', 'Enrolled', 'fas fa-school'),
 ]
+
+
+# ============================================================================
+# PWA VIEWS (Served from root for scope)
+# ============================================================================
+
+def sw_view(request):
+    import os
+    from django.conf import settings
+    from django.http import HttpResponse
+    file_path = os.path.join(settings.BASE_DIR, 'static', 'js', 'sw.js')
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            return HttpResponse(f.read(), content_type='application/javascript')
+    return HttpResponse('// Service Worker Not Found', content_type='application/javascript')
+
+def manifest_view(request):
+    import os
+    from django.conf import settings
+    from django.http import HttpResponse
+    file_path = os.path.join(settings.BASE_DIR, 'static', 'manifest.json')
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            return HttpResponse(f.read(), content_type='application/json')
+    return HttpResponse('{}', content_type='application/json')

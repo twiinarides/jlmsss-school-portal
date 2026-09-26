@@ -58,9 +58,14 @@ admissions_patterns = (
     # Document Review endpoints
     path('staff/doc/<int:doc_id>/approve/', views.staff_approve_document_view, name='staff_approve_document'),
     path('staff/doc/<int:doc_id>/flag/', views.staff_flag_document_view, name='staff_flag_document'),
+    
+    # PWA Support (served from root to grant global scope)
+    path('sw.js', views.sw_view, name='sw_js'),
+    path('manifest.json', views.manifest_view, name='manifest_json'),
     ],
     'admissions'
 )
 
 from django.urls import include
 urlpatterns = [ path('', include(admissions_patterns, namespace='admissions')) ]
+
