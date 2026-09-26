@@ -15,7 +15,7 @@
     <div class="container">
       <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider:'›';">
         <ol class="breadcrumb mb-2" style="background:none;padding:0;font-size:.82rem;">
-          <li class="breadcrumb-item"><a href="/apply/" style="color:rgba(255,255,255,.65);">Admissions</a></li>
+          <li class="breadcrumb-item"><a href="/" style="color:rgba(255,255,255,.65);">Admissions</a></li>
           <li class="breadcrumb-item active" style="color:rgba(255,255,255,.90);">{{ window.name }}</li>
         </ol>
       </nav>
@@ -27,9 +27,9 @@
         </div>
         <div class="col-lg-4 text-lg-end">
           <div class="lang-switcher justify-content-lg-end">
-            <a href="/apply/lang/en/" class="lang-btn{% if admission_lang == 'en' %} active{% endif %}" data-lang="en">English</a>
-            <a href="/apply/lang/lg/" class="lang-btn{% if admission_lang == 'lg' %} active{% endif %}" data-lang="lg">Luganda</a>
-            <a href="/apply/lang/rk/" class="lang-btn{% if admission_lang == 'rk' %} active{% endif %}" data-lang="rk">Runyakore</a>
+            <a href="?lang=en" class="lang-btn{% if admission_lang == 'en' %} active{% endif %}" data-lang="en">English</a>
+            <a href="?lang=lg" class="lang-btn{% if admission_lang == 'lg' %} active{% endif %}" data-lang="lg">Luganda</a>
+            <a href="?lang=rk" class="lang-btn{% if admission_lang == 'rk' %} active{% endif %}" data-lang="rk">Runyakore</a>
           </div>
         </div>
       </div>
@@ -131,8 +131,8 @@
             <div class="alert alert-warning d-flex align-items-center gap-3 mb-4">
               <i class="fas fa-lock fa-lg"></i>
               <div>
-                <strong>Account required.</strong> You must <a href="{% url 'admission_login' %}?next={{ request.path }}" style="color:var(--adm-navy);">log in</a> or
-                <a href="{% url 'admission_register' %}?next={{ request.path }}" style="color:var(--adm-navy);">create an account</a> to apply.
+                <strong>Account required.</strong> You must <a href="{% url 'admissions:login' %}?next={{ request.path }}" style="color:var(--adm-navy);">log in</a> or
+                <a href="{% url 'admissions:register' %}?next={{ request.path }}" style="color:var(--adm-navy);">create an account</a> to apply.
               </div>
             </div>
             {% endif %}
@@ -182,7 +182,7 @@
 
             {# Apply button #}
             {% if request.user.is_authenticated %}
-            <form method="post" action="{% url 'admission_start' window.id %}">
+            <form method="post" action="{% url 'admissions:start_application' window.id %}">
               {% csrf_token %}
               <input type="hidden" name="entry_class" id="adm-selected-class" value="">
               <input type="hidden" name="is_transfer" id="adm-is-transfer" value="0">
@@ -191,7 +191,7 @@
               </button>
             </form>
             {% else %}
-            <a href="{% url 'admission_login' %}?next={{ request.path }}" class="adm-btn adm-btn-primary adm-btn-lg w-100">
+            <a href="{% url 'admissions:login' %}?next={{ request.path }}" class="adm-btn adm-btn-primary adm-btn-lg w-100">
               <i class="fas fa-sign-in-alt me-2"></i>Login to Apply
             </a>
             {% endif %}
@@ -203,7 +203,7 @@
           <i class="fas fa-lock"></i>
           <h4>This admission window is closed.</h4>
           <p>Applications for {{ window.name }} are no longer being accepted. Please check other open windows or contact the school.</p>
-          <a href="{% url 'admission_portal' %}" class="adm-btn adm-btn-primary mt-3">
+          <a href="{% url 'admissions:landing' %}" class="adm-btn adm-btn-primary mt-3">
             <i class="fas fa-arrow-left me-2"></i>View Other Windows
           </a>
         </div>

@@ -19,8 +19,7 @@ class AdmissionSubdomainMiddleware:
 
     def __call__(self, request):
         host = request.get_host().split(':')[0].lower()
-        # Allow 127.0.0.1 for local testing of the admission portal
-        request.is_admission_portal = (host == ADMISSION_SUBDOMAIN.lower() or host == '127.0.0.1')
+        request.is_admission_portal = (host == ADMISSION_SUBDOMAIN.lower())
         if request.is_admission_portal:
             request.urlconf = 'admissions.urls'
         response = self.get_response(request)
