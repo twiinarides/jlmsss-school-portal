@@ -441,6 +441,65 @@
     });
   }
   window.addEventListener('appinstalled', () => { _banner.style.display = 'none'; });
+
+  // ── Mobile Dropdown Fix ──
+  // Ensure Bootstrap dropdowns work on all mobile browsers
+  document.addEventListener('DOMContentLoaded', function () {
+    // Initialize all dropdowns explicitly
+    var dropdownEls = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+    dropdownEls.forEach(function(el) {
+      try { new bootstrap.Dropdown(el); } catch(e) {}
+    });
+
+    // Touch-device fallback: toggle dropdown on tap
+    dropdownEls.forEach(function(toggleEl) {
+      toggleEl.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var parent = toggleEl.closest('.dropdown') || toggleEl.parentElement;
+        var menu = parent ? parent.querySelector('.dropdown-menu') : null;
+        if (!menu) return;
+        var isShown = menu.classList.contains('show');
+        // Close all open dropdowns first
+        document.querySelectorAll('.dropdown-menu.show').forEach(function(m) {
+          m.classList.remove('show');
+          var t = m.previousElementSibling;
+          if (t) t.setAttribute('aria-expanded', 'false');
+        });
+        if (!isShown) {
+          menu.classList.add('show');
+          toggleEl.setAttribute('aria-expanded', 'true');
+          // Position it below toggle
+          menu.style.position = 'absolute';
+        }
+      });
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown-menu.show').forEach(function(m) {
+          m.classList.remove('show');
+        });
+      }
+    });
+
+    // On mobile: make the navbar collapse work smoothly
+    var navbarToggler = document.querySelector('.navbar-toggler');
+    var navbarCollapse = document.getElementById('admNavbar');
+    if (navbarToggler && navbarCollapse) {
+      navbarToggler.addEventListener('click', function() {
+        var isExpanded = navbarCollapse.classList.contains('show');
+        if (isExpanded) {
+          navbarCollapse.classList.remove('show');
+          navbarToggler.classList.add('collapsed');
+        } else {
+          navbarCollapse.classList.add('show');
+          navbarToggler.classList.remove('collapsed');
+        }
+      });
+    }
+  });
 </script>
 {% block extra_js %}{% endblock %}
 </body>

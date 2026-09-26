@@ -325,13 +325,17 @@ def transfer_info_view(request, app_number):
 def document_upload_view(request, app_number):
     account = request.user.applicant_profile
     app = get_object_or_404(Application, application_number=app_number, applicant=account)
-    
-    slots = app.window.document_slots.all()
+
+    slots = list(app.window.document_slots.all())
     uploaded_docs = {doc.slot_key: doc for doc in app.documents.all()}
-    
+
+    # Attach uploaded_doc to each slot for easy template access
+    for slot in slots:
+        slot.uploaded_doc = uploaded_docs.get(slot.slot_key)
+
     if not app.can_edit and not app.can_resubmit:
         return redirect('admissions:status_detail', app_number=app.application_number)
-        
+
     return render(request, 'admissions/document_upload.html', {
         'application': app,
         'slots': slots,

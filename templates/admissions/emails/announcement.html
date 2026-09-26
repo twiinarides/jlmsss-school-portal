@@ -11,7 +11,7 @@
         <div style="color:#d4af37;font-size:12px;margin-top:6px;">JLMSSS — Kamuganguzi Janan Luwum Memorial SSS</div>
       </td></tr>
       <tr><td style="padding:36px 40px;">
-        <div style="color:#2d2d2d;font-size:14px;line-height:1.8;">{{ announcement.content|linebreaks }}</div>
+        <div style="color:#2d2d2d;font-size:14px;line-height:1.8;">{{ announcement.content|safe }}</div>
         {% if announcement.created_at %}
         <div style="margin-top:20px;color:#888;font-size:12px;">Posted: {{ announcement.created_at|date:"d F Y" }}</div>
         {% endif %}

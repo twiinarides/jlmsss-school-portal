@@ -190,7 +190,7 @@ function uploadFile(file, slotId, slotKey) {
     headers: { 'X-CSRFToken': CSRF },
     body: fd
   }).then(r => r.json()).then(data => {
-    if (data.success) {
+    if (data.status === 'success') {
       bar.style.width = '100%';
       status.textContent = '✔ Uploaded successfully!';
       status.style.color = '#198754';

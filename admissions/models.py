@@ -275,6 +275,16 @@ class DocumentSlot(models.Model):
     def accepted_types_for_input(self):
         return ','.join(f'.{t.strip().lstrip(".")}' for t in self.accepted_types.split(','))
 
+    @property
+    def document_name(self):
+        """Alias for name — used in templates."""
+        return self.name
+
+    @property
+    def accepted_formats(self):
+        """Human-readable accepted formats string."""
+        return ', '.join(t.strip().upper() for t in self.accepted_types.split(','))
+
 
 # ============================================================================
 # ADMISSION FORM (Dynamic form builder — kept from v1)
