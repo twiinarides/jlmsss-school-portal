@@ -190,7 +190,6 @@ body {
 }
 
 /* Top navbar */
-.main-header.navbar,
 .navbar-dark {
   background-color: var(--jlmss-navy) !important;
 }
