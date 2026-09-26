@@ -104,7 +104,7 @@ def send_password_reset_email(user, token):
 def send_submission_confirmation(application):
     """Send confirmation that application was successfully submitted, and notify admin."""
     subject = f'Application Received — {application.application_number}'
-    status_url = f'{ADMISSION_SUBDOMAIN}/application/{application.application_number}/status/'
+    status_url = f'{ADMISSION_SUBDOMAIN}/application/{application.application_number}/'
     context = {
         'application': application,
         'student_name': application.student_name,
@@ -137,7 +137,7 @@ def send_new_application_admin_notification(application):
 
 def send_status_change_email(application, old_status, new_status, note=''):
     """Send notification when application status changes."""
-    status_url = f'{ADMISSION_SUBDOMAIN}/application/{application.application_number}/status/'
+    status_url = f'{ADMISSION_SUBDOMAIN}/application/{application.application_number}/'
     status_labels = {
         'draft': 'Draft', 'submitted': 'Submitted',
         'under_doc_review': 'Under Document Review',
@@ -226,7 +226,7 @@ def send_bulk_email(applications_qs, subject, message_body, staff_user=None):
                 'application': app,
                 'student_name': app.student_name,
                 'message_body': message_body,
-                'status_url': f'{ADMISSION_SUBDOMAIN}/application/{app.application_number}/status/',
+                'status_url': f'{ADMISSION_SUBDOMAIN}/application/{app.application_number}/',
             }
             sent = _send(subject, app.applicant.user.email, 'admissions/emails/bulk_message.html', context)
             success += 1 if sent else 0

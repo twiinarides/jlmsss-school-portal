@@ -94,7 +94,7 @@
                 {% endif %}
               </div>
               <div class="d-flex flex-column gap-1 flex-shrink-0">
-                <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary" style="border-radius:7px;padding:0.2rem 0.5rem;font-size:0.72rem;" title="View">
+                <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-jl-green" style="border-radius:7px;padding:0.2rem 0.5rem;font-size:0.72rem;" title="View">
                   <i class="fas fa-eye"></i>
                 </a>
                 <button class="btn btn-sm btn-success approve-doc-btn" data-doc-id="{{ doc.id }}" style="border-radius:7px;padding:0.2rem 0.5rem;font-size:0.72rem;" title="Approve">
@@ -243,7 +243,7 @@
         <textarea id="flag-note" class="adm-textarea" rows="3" placeholder="Be specific about what is wrong with this document."></textarea>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius:9px;">Cancel</button>
+        <button type="button" class="btn btn-outline-jl-green" data-bs-dismiss="modal" style="border-radius:9px;">Cancel</button>
         <button type="button" class="btn btn-danger" id="confirmFlagBtn" style="border-radius:9px;">
           <i class="fas fa-flag me-1"></i>Flag Document
         </button>

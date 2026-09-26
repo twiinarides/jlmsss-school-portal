@@ -67,7 +67,7 @@
             <div class="fw-bold" style="font-size:0.95rem;">{{ student.full_name }}</div>
             <div class="text-muted" style="font-size:0.78rem;">{{ student.get_gender_display|default:student.gender|title }} &bull; DOB: {{ student.date_of_birth|date:"d M Y"|default:"—" }}</div>
           </div>
-          <a href="{% url 'admissions:edit_student' student.id %}" class="btn btn-sm btn-outline-secondary flex-shrink-0" style="border-radius:8px;">
+          <a href="{% url 'admissions:edit_student' student.id %}" class="btn btn-sm btn-outline-jl-green flex-shrink-0" style="border-radius:8px;">
             <i class="fas fa-edit"></i>
           </a>
         </div>

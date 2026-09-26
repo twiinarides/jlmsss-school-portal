@@ -1,9 +1,9 @@
 /* Jazzmin custom branding */
 
 :root {
-  --jlmss-navy: #0B1F3A;
-  --jlmss-navy-2: #0F2A4D;
-  --jlmss-gold: #D4AF37;
+  --jlmss-navy: #1a6b3a;
+  --jlmss-navy-2: #145530;
+  --jlmss-gold: #d4af37;
   --jlmss-bg: #F4F6F9;
   --jlmss-surface: #FFFFFF;
   --jlmss-text: #1F2937;
@@ -245,7 +245,7 @@ body {
 
 .navbar-nav .dropdown-item:hover,
 .navbar-nav .dropdown-item:focus {
-  background: rgba(11, 31, 58, 0.06) !important;
+  background: rgba(26, 107, 58, 0.06) !important;
   color: var(--jlmss-navy) !important;
 }
 
@@ -784,7 +784,7 @@ button.button {
 
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(11, 31, 58, 0.18);
+  box-shadow: 0 10px 20px rgba(26, 107, 58, 0.18);
 }
 
 .btn-outline-primary {
@@ -795,7 +795,7 @@ button.button {
 }
 
 .btn-outline-primary:hover {
-  background: rgba(11, 31, 58, 0.06) !important;
+  background: rgba(26, 107, 58, 0.06) !important;
 }
 
 .btn-warning {
@@ -851,7 +851,7 @@ button.button {
 }
 
 .table-hover tbody tr:hover {
-  background: rgba(11, 31, 58, 0.03);
+  background: rgba(26, 107, 58, 0.03);
 }
 
 /* Admin cards/panels */
@@ -942,7 +942,7 @@ fieldset.module {
   background: #ffffff;
   border-radius: 999px;
   padding: 10px;
-  box-shadow: 0 12px 30px rgba(11, 31, 58, 0.18);
+  box-shadow: 0 12px 30px rgba(26, 107, 58, 0.18);
 }
 
 /* Sidebar brand logo */
